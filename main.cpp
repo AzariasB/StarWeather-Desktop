@@ -75,11 +75,22 @@ int main(int argc, char *argv[])
     */
 
     Communicator c(port);
-    if(c.sendCommand(WeatherCommand::START_MODE_1)) {
-        qDebug() << "Starting mode 1";
+    if(c.sendCommand(WeatherCommand::START_MODE_2)) {
+        qDebug() << "Starting mode";
     } else {
-        qDebug() << "Failed to start mode 1";
+        qDebug() << "Failed to start mode";
     }
+
+    QObject::connect(&c, &Communicator::receivedValue, [](SensorValue val){
+        qDebug() << "Received value " << val.value << " from sensor " << val.sensorId << " at frequency " << val.frequency;
+    });
+
+    QObject::connect(&c, &Communicator::receivedPack, [](QVector<SensorValue> vals){
+        qDebug() << "Received pack of " << vals.size() << " values";
+        for(SensorValue val : vals){
+            qDebug() << "   Value " << val.value << " from sensor " << val.sensorId << " at frequency " << val.frequency;
+        }
+    });
 
     return a.exec();
 }

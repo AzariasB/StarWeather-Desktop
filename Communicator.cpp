@@ -52,46 +52,97 @@ bool Communicator::sendCommand(WeatherCommand command, qint8 argument)
 {
     if(!m_port.isOpen()) return false;
 
-    const char data[] = {static_cast<qint8>(command), argument};
+    const char data[] = {qint8(command), argument};
 
     bool written =  m_port.write(data, 2) == 2;
     return written && m_port.flush();
 }
 
-SensorValue Communicator::toSensorValue(char d1, char d2)
+SensorValue Communicator::toSensorValue(char byte1, char byte2)
 {
     SensorValue sv;
-    sv.sensorId = (d1 & 0b00001100) >> 2;
-    sv.value = static_cast<qint16>(static_cast<qint16>(d1) << 8 ) | (static_cast<qint16>(d2) & TEN_BITS);
+    quint16 combined = quint16(quint16(byte1) << 8);
+    combined |=  qint16(byte2) & 0x00FF;
+    sv.value = combined & VALUE_MASK;
+    sv.sensorId = (combined & SENSORID_MASK) >> 10;
+    sv.frequency = (combined & FREQUENCY_MASK) >> 12;
     return sv;
 }
 
+QVector<SensorValue> Communicator::readPack(QQueue<char> &queue, quint16 size)
+{
+    QVector<SensorValue> values;
+    while(queue.size() >= 2 && size > 0){
+        char byte1 = queue.dequeue();
+        char byte2 = queue.dequeue();
+        values.append(toSensorValue(byte1, byte2));
+        size--;
+    }
+
+    return values;
+}
+
+quint16 Communicator::toSize(char byte1, char byte2)
+{
+    return quint16( (quint16(byte1) << 8) | quint16(byte2));
+}
+
+void Communicator::parseCommand(QQueue<char> &queue)
+{
+    char first = queue.dequeue();
+    switch (first) {
+        case SEND_MODE1_DATA:
+        if(queue.size() < 2){
+            qWarning() << "[MODE 1]Received incorrect data";
+            return;
+        }
+        {
+            char byte1 = queue.dequeue();
+            char byte2 = queue.dequeue();
+            emit receivedValue(toSensorValue(byte1, byte2));
+        }
+        break;
+    case SEND_MODE2_DATA:
+    case GET_DATA:
+        if(queue.size() < 2){
+            qWarning() << "[MODE 2] Received incorrect data";
+            return;
+        }
+        {
+            char byte1 = queue.dequeue();
+            char byte2 = queue.dequeue();
+            quint16 size = toSize(byte1, byte2);
+            if(queue.size() < (size * 2)){
+                qWarning() << "[MODE 2] Received less data than expected :" << queue.size() << " vs " << (size*2);
+                return;
+            }
+            emit receivedPack(readPack(queue, size));
+        }
+        break;
+    default:
+        char error = queue.dequeue();
+        if(error){
+            qWarning() << "Configuration failed";
+        }
+        break;
+    }
+}
 
 void Communicator::readSerial()
-{
+{    
+    // Using a queue because multiple data can arrive at the same time
     QByteArray data = m_port.readAll();
     if(data.size() == 0){
         qWarning() << "Empty data";
-    }
-
-    char first = data.at(0);
-    qDebug() << "Received data of size " << data.size() << " code = " << static_cast<int>(first);
-
-    char d1, d2;
-    switch (first) {
-    case 0x0:
-        if(data.size() <3) {
-            qWarning() << "Received invalid sensor data";
-            return;
-        }
-        d1 = data.at(1);
-        d2 = data.at(2);
-        {
-            SensorValue val = toSensorValue(d1, d2);
-            qDebug() << "Received value from sensor " << val.sensorId << " = " << val.value;
-        }
-        return;
-    default:// emit message or something for other cases
         return;
     }
+    QQueue<char> queue;
+    for(char c : data){
+        queue.enqueue(c);
+    }
+
+    while(!queue.isEmpty()){
+        parseCommand(queue);
+    }
+
 }

@@ -34,10 +34,13 @@
 #include <qtypeinfo.h>
 #include <QObject>
 #include <QSerialPort>
+#include <QQueue>
 
-constexpr qint16 TEN_BITS = 0b0000001111111111;
+constexpr quint16 VALUE_MASK     = 0b0000001111111111;
+constexpr quint16 SENSORID_MASK  = 0b0000110000000000;
+constexpr quint16 FREQUENCY_MASK = 0b1111000000000000;
 
-enum class WeatherCommand : quint8 {
+enum WeatherCommand : quint8 {
     STOP_MODE = 0x0,
     START_MODE_1 = 0x1,
     START_MODE_2 = 0x2,
@@ -46,12 +49,15 @@ enum class WeatherCommand : quint8 {
     CONFIGURE_FE_1 = 0x5,
     CONFIGURE_FE_2 = 0x6,
     CONFIGURE_FE_3 = 0x7,
-    CONFIGURE_MODE_2 = 0x8
+    CONFIGURE_MODE_2 = 0x8,
+    SEND_MODE1_DATA = 0x9,
+    SEND_MODE2_DATA = 0xA
 };
 
 struct SensorValue{
     qint8 sensorId;
     qint16 value;
+    qint8 frequency;
 };
 
 class Communicator : public QObject
@@ -66,7 +72,11 @@ public:
 
     QVector<qint16> getMode3Data();
 signals:
-    void receivedValue(quint8 sensorId, qint16 data);
+    void receivedValue(SensorValue val);
+
+    void receivedPack(QVector<SensorValue> values);
+
+    void confirmCommand(WeatherCommand command, qint8 exeCode);
 
 private slots:
     void readSerial();
@@ -75,6 +85,14 @@ private:
     QSerialPort &m_port;
 
     SensorValue toSensorValue(char d1, char d2);
+
+    QVector<SensorValue> readPack(QQueue<char> &queue, quint16 size);
+
+    quint16 toSize(char byte1, char byte2);
+
+
+
+    void parseCommand(QQueue<char> &queue);
 };
 
 #endif // COMMUNICATOR_HPP
