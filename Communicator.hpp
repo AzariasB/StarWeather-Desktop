@@ -54,11 +54,6 @@ enum WeatherCommand : quint8 {
     SEND_MODE2_DATA = 0xA
 };
 
-struct SensorValue{
-    qint8 sensorId;
-    qint16 value;
-    qint8 frequency;
-};
 
 class Communicator : public QObject
 {

@@ -38,44 +38,17 @@
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication a(argc, argv);
-    QSerialPort port("./virtual-tty");
+    QApplication a(argc, argv);
+   /* QSerialPort port("./virtual-tty");
     if(!port.open(QIODevice::ReadWrite)){
         qWarning() << port.errorString() << "\n" << port.error();
         return -1;
     }
-
-    /*
-     * const char send[] = {'a','b'};
-    port.write(send, 2);
-
-    if(!port.flush()){
-        qWarning() << "No data written\n";
-    } else {
-        qDebug() << "Data written";
-    }
-
-    QTimer timer;
-    timer.setSingleShot(true);
-
-    QObject::connect(&port, &QSerialPort::readyRead, [&port, &timer](){
-        qDebug() << QString(port.readAll());
-        timer.start(0);
-    });
-
-    QObject::connect(&timer, &QTimer::timeout, [&port](){
-        const char toSend[] = {'a','b'};
-        port.write(toSend, 2);
-        if(!port.flush()){
-            qWarning() << "No data written\n";
-        } else {
-            qDebug() << "Data written";
-        }
-    });
+    Communicator c(port);
     */
 
-    Communicator c(port);
-    if(c.sendCommand(WeatherCommand::START_MODE_2)) {
+
+    /* if(c.sendCommand(WeatherCommand::START_MODE_2)) {
         qDebug() << "Starting mode";
     } else {
         qDebug() << "Failed to start mode";
@@ -90,7 +63,10 @@ int main(int argc, char *argv[])
         for(SensorValue val : vals){
             qDebug() << "   Value " << val.value << " from sensor " << val.sensorId << " at frequency " << val.frequency;
         }
-    });
+    }); */
+
+    MainWindow win;
+    win.show();
 
     return a.exec();
 }

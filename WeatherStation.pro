@@ -27,11 +27,15 @@ CONFIG += c++17
 SOURCES += \
         main.cpp \
         MainWindow.cpp \
-    Communicator.cpp
+    Communicator.cpp \
+    SensorsGraph.cpp \
+    SensorValue.cpp
 
 HEADERS += \
         MainWindow.hpp \
-    Communicator.hpp
+    Communicator.hpp \
+    SensorsGraph.hpp \
+    SensorValue.hpp
 
 FORMS += \
         MainWindow.ui
