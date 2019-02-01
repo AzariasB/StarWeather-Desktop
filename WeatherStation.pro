@@ -27,18 +27,14 @@ CONFIG += c++17
 SOURCES += \
         main.cpp \
         MainWindow.cpp \
-    Communicator.cpp \
     SensorsGraph.cpp \
     SensorValue.cpp \
-    SensorTime.cpp \
     ImprovedSerial.cpp
 
 HEADERS += \
         MainWindow.hpp \
-    Communicator.hpp \
     SensorsGraph.hpp \
     SensorValue.hpp \
-    SensorTime.hpp \
     ImprovedSerial.hpp \
     Config.hpp
 

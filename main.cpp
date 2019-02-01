@@ -35,7 +35,9 @@
 #include <QtSerialPort>
 #include <QInputDialog>
 #include <QMessageBox>
-#include "Communicator.hpp"
+#include <QFile>
+#include <QSerialPortInfo>
+#include "ImprovedSerial.hpp"
 
 QString chooseSerialPort(){
     QStringList possiblePorts;
@@ -45,7 +47,7 @@ QString chooseSerialPort(){
         possiblePorts.append("./virtual-tty");
 
 
-
+#else
     const auto ports =  QSerialPortInfo::availablePorts();
     for(const auto &port : ports){
         possiblePorts.append(port.portName());
@@ -81,7 +83,7 @@ int main(int argc, char *argv[])
         qWarning() << port.errorString() << "\n" << port.error();
         return EXIT_FAILURE;
     }
-    Communicator c(port);
+    ImprovedSerial c(port);
 
 
     MainWindow win(c);

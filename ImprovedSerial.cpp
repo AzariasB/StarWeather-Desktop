@@ -44,10 +44,8 @@ void ImprovedSerial::readData()
     QQueue<quint8> stream;
 
     do{
-        if(m_port.waitForReadyRead(0)){
-            QByteArray read = m_port.readAll();
-            enQueue(read, stream);
-        }
+        QByteArray read = m_port.readAll();
+        enQueue(read, stream);
 
         WeatherCommand command = WeatherCommand(stream.dequeue());
         switch (command) {
@@ -76,6 +74,12 @@ void ImprovedSerial::readData()
     connect(&m_port, &QSerialPort::readyRead, this, &ImprovedSerial::readData);
 }
 
+bool ImprovedSerial::sendCommand(WeatherCommand command, char argument)
+{
+    char data[] = {char(command), argument};
+    return (m_port.write(data, 2) == 2) && m_port.flush();
+}
+
 quint16 ImprovedSerial::toSize(quint8 byte1, quint8 byte2)
 {
     auto val = quint16( (quint16(byte1) << 8) | quint16(byte2));
@@ -93,9 +97,9 @@ Configuration ImprovedSerial::readConfiguration(QQueue<quint8> &stream)
 {
     waitNextBytes(stream, 4);
     Configuration conf;
-    conf.freq1 = stream.dequeue();
-    conf.freq2 = stream.dequeue();
-    conf.freq3 = stream.dequeue();
+    conf.freq1 = qMax(quint8(1), stream.dequeue());
+    conf.freq2 = qMax(quint8(1), stream.dequeue());
+    conf.freq3 = qMax(quint8(1), stream.dequeue());
     conf.mode2Time = stream.dequeue();
 
     return conf;
@@ -109,7 +113,7 @@ QVector<SensorValue> ImprovedSerial::readPack(QQueue<quint8> &stream)
     quint16 size = toSize(byte1, byte2);
     QVector<SensorValue> values(size);
     for(quint16 i = 0; i < size; ++i){
-        values.append(readlSensorValue(stream));
+        values << readlSensorValue(stream);
     }
     return values;
 }

@@ -44,6 +44,8 @@ class ImprovedSerial : public QObject
 public:
     explicit ImprovedSerial(QSerialPort &port, QObject *parent = nullptr);
 
+    bool sendCommand(WeatherCommand command, char argument = 0);
+
 signals:
     void receivedConfig(Configuration conf);
 

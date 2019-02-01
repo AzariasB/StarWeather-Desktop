@@ -33,25 +33,23 @@
 #include "SensorValue.hpp"
 #include <QtDebug>
 
-MainWindow::MainWindow(Communicator &comm, QWidget *parent) :
+MainWindow::MainWindow(ImprovedSerial &comm, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     m_communicator(comm)
 {
     ui->setupUi(this);
 
-    connect(&m_communicator, &Communicator::receivedValue, [this](SensorValue val){
-        val.setTimestamp(m_times[val.sensorId()-1].nextTime());
+    connect(&m_communicator, &ImprovedSerial::receivedData, [this](SensorValue val){
         ui->graph->drawSensorValue(val);
         ui->graph->redraw();
     });
 
-    connect(&m_communicator, &Communicator::receivedPack, [this](QVector<SensorValue> vals){
-        if(m_communicator.currentMode() == WeatherCommand::START_MODE_3){
+    connect(&m_communicator, &ImprovedSerial::receivedDataPack, [this](QVector<SensorValue> vals){
+        /* if(m_communicator.currentMode() == WeatherCommand::START_MODE_3){
             ui->mode3DataPushButton->setEnabled(true);
-        }
+        }*/
         for(SensorValue val : vals){
-            val.setTimestamp(m_times[val.sensorId()-1].nextTime());
             ui->graph->drawSensorValue(val);
         }
         ui->graph->redraw();
@@ -62,8 +60,8 @@ MainWindow::MainWindow(Communicator &comm, QWidget *parent) :
         m_communicator.sendCommand(WeatherCommand::GET_DATA);
     });
 
-    connect(&m_communicator, &Communicator::confirmCommand, this, &MainWindow::arduinoConfirm);
-    connect(&m_communicator, &Communicator::receivedFrequencies, this, &MainWindow::setFrequencies);
+    connect(&m_communicator, &ImprovedSerial::receivedCommand, this, &MainWindow::arduinoConfirm);
+    connect(&m_communicator, &ImprovedSerial::receivedConfig, this, &MainWindow::setFrequencies);
 
     int id = 1;
     for(auto *btn : ui->modeGroup->buttons()){
@@ -71,7 +69,7 @@ MainWindow::MainWindow(Communicator &comm, QWidget *parent) :
         ++id;
     }
 
-    m_communicator.sendCommand(WeatherCommand::STOP_START_MODE);
+    //m_communicator.sendCommand(WeatherCommand::STOP_START_MODE);
 }
 
 void MainWindow::setMode()
@@ -81,21 +79,13 @@ void MainWindow::setMode()
     m_communicator.sendCommand(command);
 }
 
-void MainWindow::setFrequencies(quint8 freq1, quint8 freq2, quint8 freq3, quint8 mode2Freq)
+void MainWindow::setFrequencies(Configuration conf)
 {
-    qDebug() << "Freq 1 = " << freq1 << ", freq2 = " << freq2 << ", freq3 = " << freq3;
-    freq1 = qMax(freq1, quint8(1));
-    ui->sensor1Slider->setValue(freq1);
-    freq2 = qMax(freq2, quint8(1));
-    ui->sensor2Slider->setValue(freq2);
-    freq3 = qMax(freq3, quint8(1));
-    ui->sensor3Slider->setValue(freq3);
-    ui->mode2Frequency->setValue(1000.f / mode2Freq);
-    m_times = {
-        SensorTime(freq1),
-        SensorTime(freq2),
-        SensorTime(freq3)
-    };
+    qDebug() << "Freq 1 = " << conf.freq1 << ", freq2 = " << conf.freq2 << ", freq3 = " << conf.freq3;
+    ui->sensor1Slider->setValue(conf.freq1);
+    ui->sensor2Slider->setValue(conf.freq2);
+    ui->sensor3Slider->setValue(conf.freq3);
+    ui->mode2Frequency->setValue(conf.mode2Time);
 }
 
 void MainWindow::arduinoConfirm(WeatherCommand command, qint8 code)

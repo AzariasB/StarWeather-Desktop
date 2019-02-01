@@ -52,7 +52,7 @@ constexpr quint16 VALUE_MASK     = 0b0000001111111111;
 constexpr quint16 SENSORID_MASK  = 0b0000110000000000;
 
 typedef quint32 timestamp_t;
-constexpr quint8 TIMESTAMP_SIZE = sizeof(timestamp_t) / 8;
+constexpr quint8 TIMESTAMP_SIZE = sizeof(timestamp_t);
 
 struct Configuration{
     quint8 freq1;

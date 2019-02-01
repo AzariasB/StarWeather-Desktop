@@ -33,8 +33,7 @@
 
 #include <QMainWindow>
 #include <QTime>
-#include "Communicator.hpp"
-#include "SensorTime.hpp"
+#include "ImprovedSerial.hpp"
 
 namespace Ui {
 class MainWindow;
@@ -45,7 +44,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(Communicator &comm, QWidget *parent = nullptr);
+    explicit MainWindow(ImprovedSerial &comm, QWidget *parent = nullptr);
 
     ~MainWindow();
 
@@ -54,14 +53,12 @@ public slots:
 
     void arduinoConfirm(WeatherCommand command, qint8 code);
 
-    void setFrequencies(quint8 freq1, quint8 freq2, quint8 freq3, quint8 mode2Freq);
+    void setFrequencies(Configuration conf);
 
 private:
     Ui::MainWindow *ui;
 
-    QVector<SensorTime> m_times;
-
-    Communicator &m_communicator;
+    ImprovedSerial &m_communicator;
 };
 
 #endif // MAINWINDOW_HPP

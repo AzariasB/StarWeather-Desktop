@@ -81,7 +81,7 @@ void SensorsGraph::drawValues(qreal left, qreal right, qreal top, qreal bottom, 
     for(const SensorValue &val : m_values){
         qint8 idx = val.sensorId() - 1;
         qreal yPosition = bottom - (((bottom - top) ) / MAX_Y) * val.value();
-        qreal xPosition = val.timestemp() * (xStep / X_STEP);
+        qreal xPosition = (val.timestemp() / 1000.f) * (xStep / X_STEP);
         allPoint[idx].append(QPointF(xPosition, yPosition));
     }
 
