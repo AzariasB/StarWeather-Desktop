@@ -38,7 +38,7 @@
 #include "SensorValue.hpp"
 
 enum WeatherCommand : quint8 {
-    STOP_MODE = 0x0,
+    STOP_START_MODE = 0x0,
     START_MODE_1 = 0x1,
     START_MODE_2 = 0x2,
     START_MODE_3 = 0x3,
@@ -62,11 +62,15 @@ public:
 
     bool sendCommand(WeatherCommand command, qint8 argument = 0);
 
+    quint8 currentMode() const;
+
     QVector<qint16> getMode3Data();
 signals:
     void receivedValue(SensorValue val);
 
     void receivedPack(QVector<SensorValue> values);
+
+    void receivedFrequencies(quint8 interval1, quint8 interval2, quint8 interval3, quint8 mode2Freq);
 
     void confirmCommand(WeatherCommand command, qint8 exeCode);
 
@@ -80,7 +84,9 @@ private:
 
     quint16 toSize(char byte1, char byte2);
 
+    bool m_started = false;
 
+    WeatherCommand m_currentMode = WeatherCommand::STOP_START_MODE;
 
     void parseCommand(QQueue<char> &queue);
 };

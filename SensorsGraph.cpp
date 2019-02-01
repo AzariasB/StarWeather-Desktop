@@ -78,15 +78,25 @@ void SensorsGraph::drawValues(qreal left, qreal right, qreal top, qreal bottom, 
     for(int i = 0; i < 3; ++i)
         allPoint.append(QPolygonF());
 
-    QVector<qreal> xPositions = {left, left, left};
     for(const SensorValue &val : m_values){
         qint8 idx = val.sensorId() - 1;
         qreal yPosition = bottom - (((bottom - top) ) / MAX_Y) * val.value();
-        qreal increment = (1.0 / val.frequency()) * 1000.0 * (xStep / X_STEP);
-        qreal xPosition = xPositions[idx] += increment;
+        qreal xPosition = val.timestemp() * (xStep / X_STEP);
         allPoint[idx].append(QPointF(xPosition, yPosition));
-        QPen &pen = m_pens[idx];
-        m_scene.addRect(xPosition - 2, yPosition - 2, 4, 4, pen, QBrush(pen.color(), Qt::BrushStyle::SolidPattern));
+    }
+
+    for(int i = 0; i < 3; ++i){
+        QPen &pen = m_pens[i];
+        QPolygonF &points = allPoint[i];
+        if(!points.isEmpty()){
+            QPointF &last = points.last();
+            if(last.x() > right){
+                qreal translate = right - last.x();
+                for(QPolygonF &pol : allPoint){
+                    pol.translate(translate, 0);
+                }
+            }
+        }
     }
 
     for(int i = 0; i < 3; ++i){
@@ -144,5 +154,6 @@ void SensorsGraph::fillScene()
         text->setPos(left, yPixelStep * i);
     }
 
+    m_scene.setSceneRect(m_scene.itemsBoundingRect());
     drawValues(left, right, top, bottom, pixelStep);
 }

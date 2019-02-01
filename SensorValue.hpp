@@ -36,7 +36,6 @@
 
 constexpr quint16 VALUE_MASK     = 0b0000001111111111;
 constexpr quint16 SENSORID_MASK  = 0b0000110000000000;
-constexpr quint16 FREQUENCY_MASK = 0b1111000000000000;
 
 
 class SensorValue
@@ -46,18 +45,18 @@ public:
 
     SensorValue(qint8 byte1, qint8 byte2);
 
-    SensorValue(qint16 value, qint8 sensorId, qint8 frequency);
-
     qint8 sensorId() const;
 
     qint16 value() const;
 
-    qint8 frequency() const;
+    quint32 timestemp() const;
+
+    void setTimestamp(quint32 tst);
 
 private:
     qint8 m_sensorId = 0;
     qint16 m_value = 0;
-    qint8 m_frequency = 0;
+    quint32 m_timestamp = 0;
 };
 
 #endif // SENSORVALUE_HPP

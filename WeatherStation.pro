@@ -29,13 +29,15 @@ SOURCES += \
         MainWindow.cpp \
     Communicator.cpp \
     SensorsGraph.cpp \
-    SensorValue.cpp
+    SensorValue.cpp \
+    SensorTime.cpp
 
 HEADERS += \
         MainWindow.hpp \
     Communicator.hpp \
     SensorsGraph.hpp \
-    SensorValue.hpp
+    SensorValue.hpp \
+    SensorTime.hpp
 
 FORMS += \
         MainWindow.ui

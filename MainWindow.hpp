@@ -32,7 +32,9 @@
 #define MAINWINDOW_HPP
 
 #include <QMainWindow>
+#include <QTime>
 #include "Communicator.hpp"
+#include "SensorTime.hpp"
 
 namespace Ui {
 class MainWindow;
@@ -52,8 +54,12 @@ public slots:
 
     void arduinoConfirm(WeatherCommand command, qint8 code);
 
+    void setFrequencies(quint8 freq1, quint8 freq2, quint8 freq3, quint8 mode2Freq);
+
 private:
     Ui::MainWindow *ui;
+
+    QVector<SensorTime> m_times;
 
     Communicator &m_communicator;
 };

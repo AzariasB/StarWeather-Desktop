@@ -38,6 +38,11 @@ Communicator::Communicator(QSerialPort &port, QObject *parent):
     connect(&m_port, &QSerialPort::readyRead, this, &Communicator::readSerial);
 }
 
+quint8 Communicator::currentMode() const
+{
+    return m_currentMode;
+}
+
 bool Communicator::connectTo(const QString &serialPort)
 {
     if(m_port.isOpen()){
@@ -55,6 +60,7 @@ bool Communicator::sendCommand(WeatherCommand command, qint8 argument)
     const char data[] = {qint8(command), argument};
 
     bool written =  m_port.write(data, 2) == 2;
+
     return written && m_port.flush();
 }
 
@@ -74,23 +80,24 @@ QVector<SensorValue> Communicator::readPack(QQueue<char> &queue, quint16 size)
 
 quint16 Communicator::toSize(char byte1, char byte2)
 {
-    return quint16( (quint16(byte1) << 8) | quint16(byte2));
+    auto val = quint16( (quint16(byte1) << 8) | quint16(byte2));
+    return val;
 }
 
 void Communicator::parseCommand(QQueue<char> &queue)
 {
     char first = queue.dequeue();
     switch (first) {
-        case SEND_MODE1_DATA:
+    case SEND_MODE1_DATA:
         if(queue.size() < 2){
             qWarning() << "[MODE 1]Received incorrect data";
             return;
         }
-        {
-            char byte1 = queue.dequeue();
-            char byte2 = queue.dequeue();
-            emit receivedValue(SensorValue(byte1, byte2));
-        }
+    {
+        char byte1 = queue.dequeue();
+        char byte2 = queue.dequeue();
+        emit receivedValue(SensorValue(byte1, byte2));
+    }
         break;
     case SEND_MODE2_DATA:
     case GET_DATA:
@@ -98,22 +105,41 @@ void Communicator::parseCommand(QQueue<char> &queue)
             qWarning() << "[MODE 2] Received incorrect data";
             return;
         }
-        {
-            char byte1 = queue.dequeue();
-            char byte2 = queue.dequeue();
-            quint16 size = toSize(byte1, byte2);
-            if(queue.size() < (size * 2)){
-                qWarning() << "[MODE 2] Received less data than expected :" << queue.size() << " vs " << (size*2);
+    {
+        char byte1 = queue.dequeue();
+        char byte2 = queue.dequeue();
+        quint16 size = toSize(byte1, byte2);
+        if(queue.size() < (size * 2)){
+            qWarning() << "[MODE 2] Received less data than expected :" << queue.size() << " vs " << (size*2);
+            return;
+        }
+        emit receivedPack(readPack(queue, size));
+    }
+        break;
+    case STOP_START_MODE:
+        if(!m_started){
+            m_started = true;
+            if(queue.size() < 4){
+                qWarning() << "[START] No enough data received";
                 return;
             }
-            emit receivedPack(readPack(queue, size));
+            quint8 freq1 = queue.dequeue();
+            quint8 freq2 = queue.dequeue();
+            quint8 freq3 = queue.dequeue();
+            quint8 mode2Freq = queue.dequeue();
+            emit receivedFrequencies(freq1, freq2, freq3, mode2Freq);
+            return;
         }
-        break;
+        // No break, falltrough to read error code
+        [[fallthrough]];
     default:
         char error = queue.dequeue();
         if(error){
             qWarning() << "Configuration failed";
         } else {
+            if(first <= 3){
+                m_currentMode = WeatherCommand(first);
+            }
             emit confirmCommand(WeatherCommand(first), error);
         }
         break;

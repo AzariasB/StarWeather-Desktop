@@ -23,40 +23,31 @@
  */
 
 /*
- * File:   SensorValue.cpp
+ * File:   SensorTime.cpp
  * Author: azarias
  *
- * Created on 31/1/2019
+ * Created on 1/2/2019
  */
-#include "SensorValue.hpp"
-#include <QtDebug>
-#include <QString>
+#include "SensorTime.hpp"
 
-SensorValue::SensorValue(qint8 byte1, qint8 byte2)
+SensorTime::SensorTime()
 {
-    quint16 combined = quint16(quint16(byte1) << 8);
-    combined |=  qint16(byte2) & 0x00FF;
-    m_value = combined & VALUE_MASK;
-    m_sensorId = (combined & SENSORID_MASK) >> 10;
+
 }
 
-
-qint16 SensorValue::value() const
+SensorTime::SensorTime(quint8 frequency):
+    m_frequency(frequency)
 {
-    return m_value;
 }
 
-qint8 SensorValue::sensorId() const
+void SensorTime::setFrequency(quint8 freq)
 {
-    return m_sensorId;
+    m_frequency = freq;
 }
 
-quint32 SensorValue::timestemp() const
+quint32 SensorTime::nextTime()
 {
-    return m_timestamp;
-}
-
-void SensorValue::setTimestamp(quint32 tst)
-{
-    m_timestamp = tst;
+    quint32 res = m_timeStamp;
+    m_timeStamp += static_cast<quint32>(1000.f / m_frequency);
+    return res;
 }

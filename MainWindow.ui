@@ -69,8 +69,11 @@
              <property name="maximum">
               <number>20</number>
              </property>
-             <property name="value">
+             <property name="pageStep">
               <number>10</number>
+             </property>
+             <property name="value">
+              <number>1</number>
              </property>
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -149,7 +152,7 @@
               <number>20</number>
              </property>
              <property name="value">
-              <number>10</number>
+              <number>1</number>
              </property>
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -172,7 +175,7 @@
               <number>20</number>
              </property>
              <property name="value">
-              <number>10</number>
+              <number>1</number>
              </property>
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -208,7 +211,7 @@
             </widget>
            </item>
            <item row="3" column="2">
-            <widget class="QSpinBox" name="spinBox">
+            <widget class="QSpinBox" name="mode2Frequency">
              <property name="suffix">
               <string/>
              </property>
@@ -294,7 +297,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_2">
+            <widget class="QPushButton" name="mode3DataPushButton">
              <property name="text">
               <string>Get mode 3 data</string>
              </property>
@@ -398,22 +401,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>sensor1Slider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>lcdNumber</receiver>
-   <slot>display(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>678</x>
-     <y>77</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>704</x>
-     <y>78</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>setModeButton</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
@@ -426,6 +413,22 @@
     <hint type="destinationlabel">
      <x>894</x>
      <y>152</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sensor1Slider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>lcdNumber</receiver>
+   <slot>display(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>489</x>
+     <y>72</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>704</x>
+     <y>68</y>
     </hint>
    </hints>
   </connection>
