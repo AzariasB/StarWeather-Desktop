@@ -32,7 +32,8 @@
 #include <QtDebug>
 #include <QString>
 
-SensorValue::SensorValue(qint8 byte1, qint8 byte2)
+SensorValue::SensorValue(timestamp_t timestamp, qint8 byte1, qint8 byte2):
+    m_timestamp(timestamp)
 {
     quint16 combined = quint16(quint16(byte1) << 8);
     combined |=  qint16(byte2) & 0x00FF;
@@ -54,9 +55,4 @@ qint8 SensorValue::sensorId() const
 quint32 SensorValue::timestemp() const
 {
     return m_timestamp;
-}
-
-void SensorValue::setTimestamp(quint32 tst)
-{
-    m_timestamp = tst;
 }

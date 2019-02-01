@@ -44,7 +44,6 @@ QString chooseSerialPort(){
     if(QFile::exists("./virtual-tty"))
         possiblePorts.append("./virtual-tty");
 
-#else
 
 
     const auto ports =  QSerialPortInfo::availablePorts();
@@ -77,6 +76,7 @@ int main(int argc, char *argv[])
     if(chosen.isEmpty()) return EXIT_SUCCESS;
 
     QSerialPort port(chosen);
+
     if(!port.open(QIODevice::ReadWrite)){
         qWarning() << port.errorString() << "\n" << port.error();
         return EXIT_FAILURE;

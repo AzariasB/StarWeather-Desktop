@@ -23,35 +23,58 @@
  */
 
 /*
- * File:   SensorValue.hpp
+ * File:   ImprovedSerial.hpp
  * Author: azarias
  *
- * Created on 31/1/2019
+ * Created on 1/2/2019
  */
-#ifndef SENSORVALUE_HPP
-#define SENSORVALUE_HPP
+#ifndef IMPROVEDSERIAL_HPP
+#define IMPROVEDSERIAL_HPP
 
-#include <qglobal.h>
+#include <QObject>
+#include <QtSerialPort>
+#include <QQueue>
+#include "SensorValue.hpp"
 #include "Config.hpp"
 
 
-class SensorValue
+class ImprovedSerial : public QObject
 {
+    Q_OBJECT
 public:
-    SensorValue() = default;
+    explicit ImprovedSerial(QSerialPort &port, QObject *parent = nullptr);
 
-    SensorValue(timestamp_t timestamp, qint8 byte1, qint8 byte2);
+signals:
+    void receivedConfig(Configuration conf);
 
-    qint8 sensorId() const;
+    void receivedCommand(WeatherCommand command, quint8 argument);
 
-    qint16 value() const;
+    void receivedData(SensorValue val);
 
-    quint32 timestemp() const;
+    void receivedDataPack(QVector<SensorValue> values);
+
+public slots:
+    void readData();
+
 
 private:
-    qint8 m_sensorId = 0;
-    qint16 m_value = 0;
-    timestamp_t m_timestamp = 0;
+    QSerialPort &m_port;
+
+    bool m_started = false;
+
+    quint16 toSize(quint8 byte1, quint8 byte2);
+
+    QQueue<quint8> &waitNextBytes(QQueue<quint8> &stream, quint16 bytes);
+
+    SensorValue readlSensorValue(QQueue<quint8> &stream);
+
+    QVector<SensorValue> readPack(QQueue<quint8> &stream);
+
+    Configuration readConfiguration(QQueue<quint8> &stream);
+
+    void readCommand(QQueue<quint8> &stream, WeatherCommand command);
+
+    static QQueue<quint8> enQueue(const QByteArray &arr, QQueue<quint8> &target);
 };
 
-#endif // SENSORVALUE_HPP
+#endif // IMPROVEDSERIAL_HPP

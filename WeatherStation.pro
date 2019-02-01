@@ -30,14 +30,17 @@ SOURCES += \
     Communicator.cpp \
     SensorsGraph.cpp \
     SensorValue.cpp \
-    SensorTime.cpp
+    SensorTime.cpp \
+    ImprovedSerial.cpp
 
 HEADERS += \
         MainWindow.hpp \
     Communicator.hpp \
     SensorsGraph.hpp \
     SensorValue.hpp \
-    SensorTime.hpp
+    SensorTime.hpp \
+    ImprovedSerial.hpp \
+    Config.hpp
 
 FORMS += \
         MainWindow.ui

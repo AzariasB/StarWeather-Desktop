@@ -23,35 +23,42 @@
  */
 
 /*
- * File:   SensorValue.hpp
+ * File:   Config.hpp
  * Author: azarias
  *
- * Created on 31/1/2019
+ * Created on 1/2/2019
  */
-#ifndef SENSORVALUE_HPP
-#define SENSORVALUE_HPP
+#ifndef CONFIG_HPP
+#define CONFIG_HPP
 
 #include <qglobal.h>
-#include "Config.hpp"
 
-
-class SensorValue
-{
-public:
-    SensorValue() = default;
-
-    SensorValue(timestamp_t timestamp, qint8 byte1, qint8 byte2);
-
-    qint8 sensorId() const;
-
-    qint16 value() const;
-
-    quint32 timestemp() const;
-
-private:
-    qint8 m_sensorId = 0;
-    qint16 m_value = 0;
-    timestamp_t m_timestamp = 0;
+enum WeatherCommand : quint8 {
+    STOP_START_MODE = 0x0,
+    START_MODE_1 = 0x1,
+    START_MODE_2 = 0x2,
+    START_MODE_3 = 0x3,
+    GET_DATA = 0x4,
+    CONFIGURE_FE_1 = 0x5,
+    CONFIGURE_FE_2 = 0x6,
+    CONFIGURE_FE_3 = 0x7,
+    CONFIGURE_MODE_2 = 0x8,
+    SEND_MODE1_DATA = 0x9,
+    SEND_MODE2_DATA = 0xA
 };
 
-#endif // SENSORVALUE_HPP
+
+constexpr quint16 VALUE_MASK     = 0b0000001111111111;
+constexpr quint16 SENSORID_MASK  = 0b0000110000000000;
+
+typedef quint32 timestamp_t;
+constexpr quint8 TIMESTAMP_SIZE = sizeof(timestamp_t) / 8;
+
+struct Configuration{
+    quint8 freq1;
+    quint8 freq2;
+    quint8 freq3;
+    quint8 mode2Time;
+};
+
+#endif // CONFIG_HPP

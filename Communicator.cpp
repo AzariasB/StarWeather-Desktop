@@ -150,6 +150,7 @@ void Communicator::readSerial()
 {    
     // Using a queue because multiple data can arrive at the same time
     QByteArray data = m_port.readAll();
+    qDebug() << "Received data of size" << data.size();
     if(data.size() == 0){
         qWarning() << "Empty data";
         return;

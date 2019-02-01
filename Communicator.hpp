@@ -37,21 +37,6 @@
 #include <QQueue>
 #include "SensorValue.hpp"
 
-enum WeatherCommand : quint8 {
-    STOP_START_MODE = 0x0,
-    START_MODE_1 = 0x1,
-    START_MODE_2 = 0x2,
-    START_MODE_3 = 0x3,
-    GET_DATA = 0x4,
-    CONFIGURE_FE_1 = 0x5,
-    CONFIGURE_FE_2 = 0x6,
-    CONFIGURE_FE_3 = 0x7,
-    CONFIGURE_MODE_2 = 0x8,
-    SEND_MODE1_DATA = 0x9,
-    SEND_MODE2_DATA = 0xA
-};
-
-
 class Communicator : public QObject
 {
     Q_OBJECT
