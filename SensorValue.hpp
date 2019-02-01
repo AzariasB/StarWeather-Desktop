@@ -31,17 +31,33 @@
 #ifndef SENSORVALUE_HPP
 #define SENSORVALUE_HPP
 
+#include <qglobal.h>
+
+
+constexpr quint16 VALUE_MASK     = 0b0000001111111111;
+constexpr quint16 SENSORID_MASK  = 0b0000110000000000;
+constexpr quint16 FREQUENCY_MASK = 0b1111000000000000;
+
 
 class SensorValue
 {
 public:
-    SensorValue();
-};
+    SensorValue() = default;
 
-struct SensorValue{
-    qint8 sensorId;
-    qint16 value;
-    qint8 frequency;
+    SensorValue(qint8 byte1, qint8 byte2);
+
+    SensorValue(qint16 value, qint8 sensorId, qint8 frequency);
+
+    qint8 sensorId() const;
+
+    qint16 value() const;
+
+    qint8 frequency() const;
+
+private:
+    qint8 m_sensorId = 0;
+    qint16 m_value = 0;
+    qint8 m_frequency = 0;
 };
 
 #endif // SENSORVALUE_HPP

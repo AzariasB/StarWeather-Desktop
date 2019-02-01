@@ -33,39 +33,58 @@
 #include <QDebug>
 #include <QTimer>
 #include <QtSerialPort>
+#include <QInputDialog>
+#include <QMessageBox>
 #include "Communicator.hpp"
+
+QString chooseSerialPort(){
+    QStringList possiblePorts;
+
+#ifdef QT_DEBUG
+    if(QFile::exists("./virtual-tty"))
+        possiblePorts.append("./virtual-tty");
+
+#else
+
+
+    const auto ports =  QSerialPortInfo::availablePorts();
+    for(const auto &port : ports){
+        possiblePorts.append(port.portName());
+    }
+#endif
+
+    if(possiblePorts.isEmpty()){
+        QMessageBox::warning(nullptr, "Aucun port detecté", "Aucun port série n'a été détecté");
+        return "";
+    }
+
+    bool ok = false;
+    QString chosen = QInputDialog::getItem(nullptr, "Port série", "Choix du port série", possiblePorts, 0, false, &ok);
+    if(!ok) {
+        return "";
+    }
+
+    return chosen;
+}
 
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-   /* QSerialPort port("./virtual-tty");
+    qsrand(time(NULL));
+
+    QString chosen = chooseSerialPort();
+    if(chosen.isEmpty()) return EXIT_SUCCESS;
+
+    QSerialPort port(chosen);
     if(!port.open(QIODevice::ReadWrite)){
         qWarning() << port.errorString() << "\n" << port.error();
-        return -1;
+        return EXIT_FAILURE;
     }
     Communicator c(port);
-    */
 
 
-    /* if(c.sendCommand(WeatherCommand::START_MODE_2)) {
-        qDebug() << "Starting mode";
-    } else {
-        qDebug() << "Failed to start mode";
-    }
-
-    QObject::connect(&c, &Communicator::receivedValue, [](SensorValue val){
-        qDebug() << "Received value " << val.value << " from sensor " << val.sensorId << " at frequency " << val.frequency;
-    });
-
-    QObject::connect(&c, &Communicator::receivedPack, [](QVector<SensorValue> vals){
-        qDebug() << "Received pack of " << vals.size() << " values";
-        for(SensorValue val : vals){
-            qDebug() << "   Value " << val.value << " from sensor " << val.sensorId << " at frequency " << val.frequency;
-        }
-    }); */
-
-    MainWindow win;
+    MainWindow win(c);
     win.show();
 
     return a.exec();

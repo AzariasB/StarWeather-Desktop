@@ -32,6 +32,7 @@
 #define MAINWINDOW_HPP
 
 #include <QMainWindow>
+#include "Communicator.hpp"
 
 namespace Ui {
 class MainWindow;
@@ -42,11 +43,19 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(Communicator &comm, QWidget *parent = nullptr);
+
     ~MainWindow();
+
+public slots:
+    void setMode();
+
+    void arduinoConfirm(WeatherCommand command, qint8 code);
 
 private:
     Ui::MainWindow *ui;
+
+    Communicator &m_communicator;
 };
 
 #endif // MAINWINDOW_HPP

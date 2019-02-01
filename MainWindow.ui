@@ -28,17 +28,36 @@
            <string>Fréquences d'échantillonage</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_5">
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_2">
+           <property name="sizeConstraint">
+            <enum>QLayout::SetDefaultConstraint</enum>
+           </property>
+           <property name="topMargin">
+            <number>3</number>
+           </property>
+           <property name="bottomMargin">
+            <number>3</number>
+           </property>
+           <property name="verticalSpacing">
+            <number>3</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label">
              <property name="text">
-              <string>Fréquence Détecteur 2</string>
+              <string>Fréquence Détecteur 1 (Hz)</string>
              </property>
             </widget>
            </item>
            <item row="3" column="0">
             <widget class="QLabel" name="label_4">
              <property name="text">
-              <string>Fréquence mode 2</string>
+              <string>Fréquence mode 2 (ms)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Fréquence Détecteur 3 (Hz)</string>
              </property>
             </widget>
            </item>
@@ -50,8 +69,97 @@
              <property name="maximum">
               <number>20</number>
              </property>
+             <property name="value">
+              <number>10</number>
+             </property>
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>Fréquence Détecteur 2 (Hz)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="3">
+            <widget class="QLCDNumber" name="lcdNumber">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Plain</enum>
+             </property>
+             <property name="smallDecimalPoint">
+              <bool>true</bool>
+             </property>
+             <property name="digitCount">
+              <number>2</number>
+             </property>
+             <property name="segmentStyle">
+              <enum>QLCDNumber::Flat</enum>
+             </property>
+             <property name="intValue" stdset="0">
+              <number>1</number>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="3">
+            <widget class="QLCDNumber" name="lcdNumber_2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Plain</enum>
+             </property>
+             <property name="smallDecimalPoint">
+              <bool>true</bool>
+             </property>
+             <property name="digitCount">
+              <number>2</number>
+             </property>
+             <property name="segmentStyle">
+              <enum>QLCDNumber::Flat</enum>
+             </property>
+             <property name="intValue" stdset="0">
+              <number>1</number>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QSlider" name="sensor3Slider">
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>20</number>
+             </property>
+             <property name="value">
+              <number>10</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QPushButton" name="pushButton">
+             <property name="text">
+              <string>Set frequencies</string>
              </property>
             </widget>
            </item>
@@ -62,6 +170,9 @@
              </property>
              <property name="maximum">
               <number>20</number>
+             </property>
+             <property name="value">
+              <number>10</number>
              </property>
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -97,127 +208,24 @@
             </widget>
            </item>
            <item row="3" column="2">
-            <widget class="QSlider" name="mode2Slider">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+            <widget class="QSpinBox" name="spinBox">
+             <property name="suffix">
+              <string/>
              </property>
-            </widget>
-           </item>
-           <item row="0" column="3">
-            <widget class="QLCDNumber" name="lcdNumber">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+             <property name="prefix">
+              <string/>
              </property>
-             <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Plain</enum>
-             </property>
-             <property name="smallDecimalPoint">
-              <bool>true</bool>
-             </property>
-             <property name="digitCount">
-              <number>2</number>
-             </property>
-             <property name="segmentStyle">
-              <enum>QLCDNumber::Flat</enum>
-             </property>
-             <property name="intValue" stdset="0">
-              <number>1</number>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="3">
-            <widget class="QLCDNumber" name="lcdNumber_4">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Plain</enum>
-             </property>
-             <property name="smallDecimalPoint">
-              <bool>true</bool>
-             </property>
-             <property name="digitCount">
-              <number>2</number>
-             </property>
-             <property name="segmentStyle">
-              <enum>QLCDNumber::Flat</enum>
-             </property>
-             <property name="intValue" stdset="0">
-              <number>1</number>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label">
-             <property name="text">
-              <string>Fréquence Détecteur 1</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_3">
-             <property name="text">
-              <string>Fréquence Détecteur 3</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="2">
-            <widget class="QSlider" name="sensor3Slider">
              <property name="minimum">
-              <number>1</number>
+              <number>1000</number>
              </property>
              <property name="maximum">
-              <number>20</number>
+              <number>5000</number>
              </property>
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+             <property name="singleStep">
+              <number>100</number>
              </property>
-            </widget>
-           </item>
-           <item row="1" column="3">
-            <widget class="QLCDNumber" name="lcdNumber_2">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Plain</enum>
-             </property>
-             <property name="smallDecimalPoint">
-              <bool>true</bool>
-             </property>
-             <property name="digitCount">
-              <number>2</number>
-             </property>
-             <property name="segmentStyle">
-              <enum>QLCDNumber::Flat</enum>
-             </property>
-             <property name="intValue" stdset="0">
-              <number>1</number>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="0">
-            <widget class="QPushButton" name="pushButton">
-             <property name="text">
-              <string>Set frequencies</string>
+             <property name="value">
+              <number>2500</number>
              </property>
             </widget>
            </item>
@@ -225,11 +233,26 @@
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="QGroupBox" name="groupBox">
+         <widget class="QGroupBox" name="groupBoxMode">
           <property name="title">
            <string>Selection du mode</string>
           </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
+          <property name="checkable">
+           <bool>false</bool>
+          </property>
           <layout class="QVBoxLayout" name="verticalLayout">
+           <property name="spacing">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>3</number>
+           </property>
+           <property name="bottomMargin">
+            <number>3</number>
+           </property>
            <item>
             <widget class="QRadioButton" name="mode1Button">
              <property name="text">
@@ -238,6 +261,9 @@
              <property name="checked">
               <bool>true</bool>
              </property>
+             <attribute name="buttonGroup">
+              <string notr="true">modeGroup</string>
+             </attribute>
             </widget>
            </item>
            <item>
@@ -245,6 +271,9 @@
              <property name="text">
               <string>Mode 2</string>
              </property>
+             <attribute name="buttonGroup">
+              <string notr="true">modeGroup</string>
+             </attribute>
             </widget>
            </item>
            <item>
@@ -252,6 +281,9 @@
              <property name="text">
               <string>Mode 3</string>
              </property>
+             <attribute name="buttonGroup">
+              <string notr="true">modeGroup</string>
+             </attribute>
             </widget>
            </item>
            <item>
@@ -261,12 +293,19 @@
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_2">
+             <property name="text">
+              <string>Get mode 3 data</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
        </layout>
       </item>
-      <item row="1" column="2" rowspan="3">
+      <item row="2" column="2" rowspan="3">
        <widget class="SensorsGraph" name="graph">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -333,28 +372,12 @@
    <slot>display(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>611</x>
-     <y>131</y>
+     <x>678</x>
+     <y>129</y>
     </hint>
     <hint type="destinationlabel">
      <x>702</x>
      <y>131</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>mode2Slider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>lcdNumber_4</receiver>
-   <slot>display(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>598</x>
-     <y>161</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>701</x>
-     <y>162</y>
     </hint>
    </hints>
   </connection>
@@ -365,12 +388,12 @@
    <slot>display(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>622</x>
-     <y>109</y>
+     <x>678</x>
+     <y>103</y>
     </hint>
     <hint type="destinationlabel">
-     <x>694</x>
-     <y>108</y>
+     <x>712</x>
+     <y>107</y>
     </hint>
    </hints>
   </connection>
@@ -381,8 +404,8 @@
    <slot>display(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>597</x>
-     <y>80</y>
+     <x>678</x>
+     <y>77</y>
     </hint>
     <hint type="destinationlabel">
      <x>704</x>
@@ -390,5 +413,27 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>setModeButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setMode()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>814</x>
+     <y>146</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>894</x>
+     <y>152</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>setMode()</slot>
+ </slots>
+ <buttongroups>
+  <buttongroup name="modeGroup"/>
+ </buttongroups>
 </ui>

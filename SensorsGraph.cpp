@@ -34,6 +34,12 @@
 #include <QResizeEvent>
 #include <QGraphicsTextItem>
 
+QVector<QPen> SensorsGraph::m_pens = {
+    QPen(Qt::red, 3),
+    QPen(Qt::green, 3),
+    QPen(Qt::blue, 3)
+};
+
 SensorsGraph::SensorsGraph(QWidget *parent):
     QGraphicsView (parent)
 {
@@ -61,6 +67,43 @@ int toPointNumber(qreal size)
     return size / 15;
 }
 
+void SensorsGraph::drawSensorValue(const SensorValue &value)
+{
+    m_values.append(value);
+}
+
+void SensorsGraph::drawValues(qreal left, qreal right, qreal top, qreal bottom, qreal xStep)
+{
+    QVector<QPolygonF> allPoint;
+    for(int i = 0; i < 3; ++i)
+        allPoint.append(QPolygonF());
+
+    QVector<qreal> xPositions = {left, left, left};
+    for(const SensorValue &val : m_values){
+        qint8 idx = val.sensorId() - 1;
+        qreal yPosition = bottom - (((bottom - top) ) / MAX_Y) * val.value();
+        qreal increment = (1.0 / val.frequency()) * 1000.0 * (xStep / X_STEP);
+        qreal xPosition = xPositions[idx] += increment;
+        allPoint[idx].append(QPointF(xPosition, yPosition));
+        QPen &pen = m_pens[idx];
+        m_scene.addRect(xPosition - 2, yPosition - 2, 4, 4, pen, QBrush(pen.color(), Qt::BrushStyle::SolidPattern));
+    }
+
+    for(int i = 0; i < 3; ++i){
+        QPen &pen = m_pens[i];
+        QPolygonF &points = allPoint[i];
+        QPainterPath path;
+        path.addPolygon(points);
+        m_scene.addPath(path, pen);
+    }
+
+}
+
+void SensorsGraph::redraw()
+{
+    fillScene();
+}
+
 void SensorsGraph::fillScene()
 {
     m_scene.clear();
@@ -85,7 +128,7 @@ void SensorsGraph::fillScene()
 
     // draw lines on x axis
     int points = toPointNumber(right - left);
-    text = m_scene.addText("20");
+    text = m_scene.addText("50");
     qreal pixelStep = (right - left) / points;
     text->setPos(pixelStep, bottom - text->boundingRect().height());
     for(int i = 1; i < points; ++i){
@@ -93,11 +136,13 @@ void SensorsGraph::fillScene()
     }
 
     // draw lines on y axis
-    pixelStep = (bottom - top) / Y_VALUES;
+    qreal yPixelStep = (bottom - top) / Y_VALUES;
     int yStep = MAX_Y / Y_VALUES;
     for(int i = 1; i < Y_VALUES; ++i){
-        m_scene.addLine( left - 5, top + i * pixelStep, right, top + i * pixelStep);
+        m_scene.addLine( left - 5, top + i * yPixelStep, right, top + i * yPixelStep);
         text = m_scene.addText(QString::number((Y_VALUES  - i) * yStep));
-        text->setPos(left, pixelStep * i);
+        text->setPos(left, yPixelStep * i);
     }
+
+    drawValues(left, right, top, bottom, pixelStep);
 }

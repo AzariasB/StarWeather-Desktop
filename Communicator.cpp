@@ -58,16 +58,6 @@ bool Communicator::sendCommand(WeatherCommand command, qint8 argument)
     return written && m_port.flush();
 }
 
-SensorValue Communicator::toSensorValue(char byte1, char byte2)
-{
-    SensorValue sv;
-    quint16 combined = quint16(quint16(byte1) << 8);
-    combined |=  qint16(byte2) & 0x00FF;
-    sv.value = combined & VALUE_MASK;
-    sv.sensorId = (combined & SENSORID_MASK) >> 10;
-    sv.frequency = (combined & FREQUENCY_MASK) >> 12;
-    return sv;
-}
 
 QVector<SensorValue> Communicator::readPack(QQueue<char> &queue, quint16 size)
 {
@@ -75,7 +65,7 @@ QVector<SensorValue> Communicator::readPack(QQueue<char> &queue, quint16 size)
     while(queue.size() >= 2 && size > 0){
         char byte1 = queue.dequeue();
         char byte2 = queue.dequeue();
-        values.append(toSensorValue(byte1, byte2));
+        values.append(SensorValue(byte1, byte2));
         size--;
     }
 
@@ -99,7 +89,7 @@ void Communicator::parseCommand(QQueue<char> &queue)
         {
             char byte1 = queue.dequeue();
             char byte2 = queue.dequeue();
-            emit receivedValue(toSensorValue(byte1, byte2));
+            emit receivedValue(SensorValue(byte1, byte2));
         }
         break;
     case SEND_MODE2_DATA:
@@ -123,6 +113,8 @@ void Communicator::parseCommand(QQueue<char> &queue)
         char error = queue.dequeue();
         if(error){
             qWarning() << "Configuration failed";
+        } else {
+            emit confirmCommand(WeatherCommand(first), error);
         }
         break;
     }

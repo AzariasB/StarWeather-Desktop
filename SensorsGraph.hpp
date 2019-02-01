@@ -33,9 +33,11 @@
 
 #include <QWidget>
 #include <QGraphicsView>
+#include "SensorValue.hpp"
+
 
 constexpr int MAX_Y = 1024;
-constexpr int X_STEP = 20;
+constexpr int X_STEP = 50;
 constexpr int X_VALUES = 200;
 constexpr int Y_VALUES = 6;
 
@@ -44,6 +46,9 @@ class SensorsGraph : public QGraphicsView
 public:
     SensorsGraph(QWidget *parent);
 
+    void drawSensorValue(const SensorValue &value);
+
+    void redraw();
 
 protected:
 
@@ -55,7 +60,13 @@ private:
 
     QGraphicsScene m_scene;
 
+    QVector<SensorValue> m_values;
+
     void fillScene();
+
+    void drawValues(qreal left, qreal right, qreal top, qreal bottom, qreal xStep);
+
+    static QVector<QPen> m_pens;
 };
 
 #endif // SENSORSGRAPH_HPP

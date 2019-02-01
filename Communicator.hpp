@@ -35,10 +35,7 @@
 #include <QObject>
 #include <QSerialPort>
 #include <QQueue>
-
-constexpr quint16 VALUE_MASK     = 0b0000001111111111;
-constexpr quint16 SENSORID_MASK  = 0b0000110000000000;
-constexpr quint16 FREQUENCY_MASK = 0b1111000000000000;
+#include "SensorValue.hpp"
 
 enum WeatherCommand : quint8 {
     STOP_MODE = 0x0,
@@ -78,8 +75,6 @@ private slots:
 
 private:
     QSerialPort &m_port;
-
-    SensorValue toSensorValue(char d1, char d2);
 
     QVector<SensorValue> readPack(QQueue<char> &queue, quint16 size);
 

@@ -30,7 +30,34 @@
  */
 #include "SensorValue.hpp"
 
-SensorValue::SensorValue()
+SensorValue::SensorValue(qint8 byte1, qint8 byte2)
+{
+    quint16 combined = quint16(quint16(byte1) << 8);
+    combined |=  qint16(byte2) & 0x00FF;
+    m_value = combined & VALUE_MASK;
+    m_sensorId = (combined & SENSORID_MASK) >> 10;
+    m_frequency = (combined & FREQUENCY_MASK) >> 12;
+}
+
+SensorValue::SensorValue(qint16 value, qint8 sensorId, qint8 frequency):
+    m_sensorId(sensorId),
+    m_value(value),
+    m_frequency(frequency)
 {
 
+}
+
+qint16 SensorValue::value() const
+{
+    return m_value;
+}
+
+qint8 SensorValue::sensorId() const
+{
+    return m_sensorId;
+}
+
+qint8 SensorValue::frequency() const
+{
+    return m_frequency;
 }
