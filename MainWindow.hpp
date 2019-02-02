@@ -55,6 +55,8 @@ public slots:
 
     void setFrequencies(Configuration conf);
 
+    void sendFrequencies();
+
 private:
     Ui::MainWindow *ui;
 

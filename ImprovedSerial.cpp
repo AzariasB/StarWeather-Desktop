@@ -56,14 +56,9 @@ void ImprovedSerial::readData()
         case GET_DATA:
             emit receivedDataPack(readPack(stream));
             break;
-        case STOP_START_MODE:
-            if(!m_started){
-                m_started = true;
-                emit receivedConfig(readConfiguration(stream));
-                break;
-            }
-            // No break, falltrough to read error code
-            [[fallthrough]];
+        case GET_FREQUENCIES:
+            emit receivedConfig(readConfiguration(stream));
+            break;
         default:
             readCommand(stream, command);
             break;
@@ -86,11 +81,31 @@ quint16 ImprovedSerial::toSize(quint8 byte1, quint8 byte2)
     return val;
 }
 
+WeatherCommand ImprovedSerial::currentMode() const
+{
+    return m_currentMode;
+}
+
 void ImprovedSerial::readCommand(QQueue<quint8> &stream, WeatherCommand command)
 {
     waitNextBytes(stream, 1);
     quint8 code = stream.dequeue();
+    if(code == 0 && command <= WeatherCommand::START_MODE_3){
+        m_currentMode = command;
+        m_started = command != WeatherCommand::STOP_MODE;
+    }
     emit receivedCommand(command, code);
+}
+
+bool ImprovedSerial::sendConfiguration(const Configuration &conf)
+{
+    bool all = true;
+    all = sendCommand(WeatherCommand::CONFIGURE_FE_1, conf.freq1) && all;
+    all = sendCommand(WeatherCommand::CONFIGURE_FE_2, conf.freq2) && all;
+    all = sendCommand(WeatherCommand::CONFIGURE_FE_3, conf.freq3) && all;
+    all = sendCommand(WeatherCommand::CONFIGURE_MODE_2, conf.mode2Time) && all;
+    return all;
+
 }
 
 Configuration ImprovedSerial::readConfiguration(QQueue<quint8> &stream)
@@ -101,7 +116,6 @@ Configuration ImprovedSerial::readConfiguration(QQueue<quint8> &stream)
     conf.freq2 = qMax(quint8(1), stream.dequeue());
     conf.freq3 = qMax(quint8(1), stream.dequeue());
     conf.mode2Time = stream.dequeue();
-
     return conf;
 }
 
@@ -111,7 +125,7 @@ QVector<SensorValue> ImprovedSerial::readPack(QQueue<quint8> &stream)
     quint8 byte1 = stream.dequeue();
     quint8 byte2 = stream.dequeue();
     quint16 size = toSize(byte1, byte2);
-    QVector<SensorValue> values(size);
+    QVector<SensorValue> values;
     for(quint16 i = 0; i < size; ++i){
         values << readlSensorValue(stream);
     }

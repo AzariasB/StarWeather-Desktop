@@ -46,9 +46,9 @@ MainWindow::MainWindow(ImprovedSerial &comm, QWidget *parent) :
     });
 
     connect(&m_communicator, &ImprovedSerial::receivedDataPack, [this](QVector<SensorValue> vals){
-        /* if(m_communicator.currentMode() == WeatherCommand::START_MODE_3){
+        if(m_communicator.currentMode() == WeatherCommand::START_MODE_3){
             ui->mode3DataPushButton->setEnabled(true);
-        }*/
+        }
         for(SensorValue val : vals){
             ui->graph->drawSensorValue(val);
         }
@@ -62,14 +62,15 @@ MainWindow::MainWindow(ImprovedSerial &comm, QWidget *parent) :
 
     connect(&m_communicator, &ImprovedSerial::receivedCommand, this, &MainWindow::arduinoConfirm);
     connect(&m_communicator, &ImprovedSerial::receivedConfig, this, &MainWindow::setFrequencies);
+    connect(ui->setFrequenciesButton, &QPushButton::clicked, this, &MainWindow::sendFrequencies);
 
-    int id = 1;
+    int id = 0;
     for(auto *btn : ui->modeGroup->buttons()){
         ui->modeGroup->setId(btn, id);
         ++id;
     }
 
-    //m_communicator.sendCommand(WeatherCommand::STOP_START_MODE);
+    m_communicator.sendCommand(WeatherCommand::GET_FREQUENCIES);
 }
 
 void MainWindow::setMode()
@@ -77,6 +78,16 @@ void MainWindow::setMode()
     ui->groupBoxMode->setEnabled(false); // disable, will be enable when arduino answers back
     WeatherCommand command = static_cast<WeatherCommand>(ui->modeGroup->checkedId());
     m_communicator.sendCommand(command);
+}
+
+void MainWindow::sendFrequencies()
+{
+    Configuration conf;
+    conf.freq1 = ui->sensor1Slider->value();
+    conf.freq2 = ui->sensor2Slider->value();
+    conf.freq3 = ui->sensor3Slider->value();
+    conf.mode2Time = ui->mode2Frequency->value();
+    m_communicator.sendConfiguration(conf);
 }
 
 void MainWindow::setFrequencies(Configuration conf)

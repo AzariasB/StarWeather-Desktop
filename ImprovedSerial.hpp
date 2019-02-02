@@ -46,6 +46,10 @@ public:
 
     bool sendCommand(WeatherCommand command, char argument = 0);
 
+    WeatherCommand currentMode() const;
+
+    bool sendConfiguration(const Configuration &conf);
+
 signals:
     void receivedConfig(Configuration conf);
 
@@ -63,6 +67,8 @@ private:
     QSerialPort &m_port;
 
     bool m_started = false;
+
+    WeatherCommand m_currentMode = WeatherCommand::STOP_MODE;
 
     quint16 toSize(quint8 byte1, quint8 byte2);
 
