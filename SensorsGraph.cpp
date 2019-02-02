@@ -74,39 +74,37 @@ void SensorsGraph::drawSensorValue(const SensorValue &value)
 
 void SensorsGraph::drawValues(qreal left, qreal right, qreal top, qreal bottom, qreal xStep)
 {
-    QVector<QPolygonF> allPoint;
-    for(int i = 0; i < 3; ++i)
-        allPoint.append(QPolygonF());
+    QVector<QPolygonF> allPoint(3);
 
+    qreal mostRight = 0;
     for(const SensorValue &val : m_values){
         qint8 idx = val.sensorId() - 1;
         qreal yPosition = bottom - (((bottom - top) ) / MAX_Y) * val.value();
         qreal xPosition = (val.timestemp() / 1000.f) * (xStep / X_STEP);
         allPoint[idx].append(QPointF(xPosition, yPosition));
+        mostRight = qMax(xPosition, mostRight);
     }
 
-    for(int i = 0; i < 3; ++i){
-        QPen &pen = m_pens[i];
-        QPolygonF &points = allPoint[i];
-        if(!points.isEmpty()){
-            QPointF &last = points.last();
-            if(last.x() > right){
-                qreal translate = right - last.x();
-                for(QPolygonF &pol : allPoint){
-                    pol.translate(translate, 0);
-                }
-            }
+
+    if(mostRight > right){
+        qreal translate = right - mostRight;
+        for(int i = 0; i < 3; ++i){
+            QPen &pen = m_pens[i];
+            QPolygonF &points = allPoint[i];
+            points.translate(translate, 0);
+            QPainterPath path;
+            path.addPolygon(points);
+            m_scene.addPath(path, pen);
+        }
+    } else {
+        for(int i = 0; i < 3; ++i){
+            QPen &pen = m_pens[i];
+            QPolygonF &points = allPoint[i];
+            QPainterPath path;
+            path.addPolygon(points);
+            m_scene.addPath(path, pen);
         }
     }
-
-    for(int i = 0; i < 3; ++i){
-        QPen &pen = m_pens[i];
-        QPolygonF &points = allPoint[i];
-        QPainterPath path;
-        path.addPolygon(points);
-        m_scene.addPath(path, pen);
-    }
-
 }
 
 void SensorsGraph::redraw()
@@ -138,7 +136,7 @@ void SensorsGraph::fillScene()
 
     // draw lines on x axis
     int points = toPointNumber(right - left);
-    text = m_scene.addText("50");
+    text = m_scene.addText(QString::number(X_STEP));
     qreal pixelStep = (right - left) / points;
     text->setPos(pixelStep, bottom - text->boundingRect().height());
     for(int i = 1; i < points; ++i){
