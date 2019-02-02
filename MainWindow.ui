@@ -317,6 +317,9 @@
            </item>
            <item>
             <widget class="QPushButton" name="mode3DataPushButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="text">
               <string>Get mode 3 data</string>
              </property>
@@ -352,7 +355,7 @@
    </property>
    <widget class="QMenu" name="menuFichier">
     <property name="title">
-     <string>Fichier</string>
+     <string>Station</string>
     </property>
     <addaction name="actionQuitter"/>
    </widget>
@@ -360,6 +363,7 @@
     <property name="title">
      <string>A propos</string>
     </property>
+    <addaction name="actionA_propos"/>
     <addaction name="actionA_propos_de_Qt"/>
    </widget>
    <addaction name="menuFichier"/>
@@ -374,6 +378,11 @@
   <action name="actionA_propos_de_Qt">
    <property name="text">
     <string>A propos de Qt</string>
+   </property>
+  </action>
+  <action name="actionA_propos">
+   <property name="text">
+    <string>A propos</string>
    </property>
   </action>
  </widget>
@@ -426,8 +435,8 @@
    <slot>setMode()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>814</x>
-     <y>146</y>
+     <x>873</x>
+     <y>173</y>
     </hint>
     <hint type="destinationlabel">
      <x>894</x>
@@ -451,9 +460,93 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>setFrequenciesButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>sendFrequencies()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>166</x>
+     <y>188</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>895</x>
+     <y>212</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>mode3DataPushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>getMode3Data()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>833</x>
+     <y>186</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>894</x>
+     <y>191</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionQuitter</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>448</x>
+     <y>256</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionA_propos</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>about()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>448</x>
+     <y>256</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionA_propos_de_Qt</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>aboutQt()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>448</x>
+     <y>256</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>setMode()</slot>
+  <slot>sendFrequencies()</slot>
+  <slot>getMode3Data()</slot>
+  <slot>aboutQt()</slot>
+  <slot>about()</slot>
  </slots>
  <buttongroups>
   <buttongroup name="modeGroup"/>

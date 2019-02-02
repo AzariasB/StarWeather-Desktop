@@ -57,6 +57,12 @@ public slots:
 
     void sendFrequencies();
 
+    void getMode3Data();
+
+    void aboutQt();
+
+    void about();
+
 private:
     Ui::MainWindow *ui;
 

@@ -32,6 +32,7 @@
 #include "ui_MainWindow.h"
 #include "SensorValue.hpp"
 #include <QtDebug>
+#include <QMessageBox>
 
 MainWindow::MainWindow(ImprovedSerial &comm, QWidget *parent) :
     QMainWindow(parent),
@@ -55,14 +56,8 @@ MainWindow::MainWindow(ImprovedSerial &comm, QWidget *parent) :
         ui->graph->redraw();
     });
 
-    connect(ui->mode3DataPushButton, &QPushButton::clicked, [this](bool){
-        ui->mode3DataPushButton->setEnabled(false);
-        m_communicator.sendCommand(WeatherCommand::GET_DATA);
-    });
-
     connect(&m_communicator, &ImprovedSerial::receivedCommand, this, &MainWindow::arduinoConfirm);
     connect(&m_communicator, &ImprovedSerial::receivedConfig, this, &MainWindow::setFrequencies);
-    connect(ui->setFrequenciesButton, &QPushButton::clicked, this, &MainWindow::sendFrequencies);
 
     int id = 0;
     for(auto *btn : ui->modeGroup->buttons()){
@@ -71,6 +66,12 @@ MainWindow::MainWindow(ImprovedSerial &comm, QWidget *parent) :
     }
 
     m_communicator.sendCommand(WeatherCommand::GET_FREQUENCIES);
+}
+
+void MainWindow::getMode3Data()
+{
+    ui->mode3DataPushButton->setEnabled(false);
+    m_communicator.sendCommand(WeatherCommand::GET_DATA);
 }
 
 void MainWindow::setMode()
@@ -90,9 +91,18 @@ void MainWindow::sendFrequencies()
     m_communicator.sendConfiguration(conf);
 }
 
+void MainWindow::aboutQt()
+{
+    QMessageBox::aboutQt(this, "A propos de Qt");
+}
+
+void MainWindow::about()
+{
+    QMessageBox::about(this, "A propos", "Station météo - version PC\n Programmé par Azarias Boutin");
+}
+
 void MainWindow::setFrequencies(Configuration conf)
 {
-    qDebug() << "Freq 1 = " << conf.freq1 << ", freq2 = " << conf.freq2 << ", freq3 = " << conf.freq3;
     ui->sensor1Slider->setValue(conf.freq1);
     ui->sensor2Slider->setValue(conf.freq2);
     ui->sensor3Slider->setValue(conf.freq3);
@@ -101,7 +111,6 @@ void MainWindow::setFrequencies(Configuration conf)
 
 void MainWindow::arduinoConfirm(WeatherCommand command, qint8 code)
 {
-    qDebug() << "Confirm " << command << " code = " << code;
     if(command <= 3){
         ui->groupBoxMode->setEnabled(true);
         ui->mode3DataPushButton->setEnabled(command == 3);
