@@ -60,7 +60,9 @@ private:
 
     QGraphicsScene m_scene;
 
-    QVector<SensorValue> m_values;
+    QVector<QVector<SensorValue>> m_values = QVector<QVector<SensorValue>>(3);
+
+    void clearOldValues(QVector<SensorValue> &values, QPolygonF &polygon, qreal left);
 
     void fillScene();
 

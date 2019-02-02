@@ -33,6 +33,7 @@
 #include <QShowEvent>
 #include <QResizeEvent>
 #include <QGraphicsTextItem>
+#include <QElapsedTimer>
 
 QVector<QPen> SensorsGraph::m_pens = {
     QPen(Qt::red, 3),
@@ -64,12 +65,26 @@ void SensorsGraph::resizeEvent(QResizeEvent *ev)
 
 int toPointNumber(qreal size)
 {
-    return size / 15;
+    return int(size / 15);
 }
 
 void SensorsGraph::drawSensorValue(const SensorValue &value)
 {
-    m_values.append(value);
+    m_values[value.sensorId() - 1] << value;
+}
+
+void SensorsGraph::clearOldValues(QVector<SensorValue> &values, QPolygonF &polygon, qreal left)
+{
+    if(polygon.isEmpty() || polygon.first().x() > left) return;
+    int toEraseIdx = 0;
+    for(const auto &point: polygon){
+        if(point.x() < left) toEraseIdx++;
+        else break;
+    }
+    if(toEraseIdx > 1){
+        values.remove(0, toEraseIdx - 1);
+        polygon.remove(0, toEraseIdx - 1);
+    }
 }
 
 void SensorsGraph::drawValues(qreal left, qreal right, qreal top, qreal bottom, qreal xStep)
@@ -77,26 +92,31 @@ void SensorsGraph::drawValues(qreal left, qreal right, qreal top, qreal bottom, 
     QVector<QPolygonF> allPoint(3);
 
     qreal mostRight = 0;
-    for(const SensorValue &val : m_values){
-        qint8 idx = val.sensorId() - 1;
-        qreal yPosition = bottom - (((bottom - top) ) / MAX_Y) * val.value();
-        qreal xPosition = (val.timestemp() / 1000.f) * (xStep / X_STEP);
-        allPoint[idx].append(QPointF(xPosition, yPosition));
-        mostRight = qMax(xPosition, mostRight);
+    for(int i = 0; i < 3; ++i){
+        QPolygonF &pol = allPoint[i];
+        const QVector<SensorValue> &values = m_values[i];
+        for(const SensorValue &val: values){
+            qreal yPosition = bottom - (((bottom - top) ) / MAX_Y) * val.value();
+            qreal xPosition = (val.timestemp() / 1000.0) * (xStep / X_STEP);
+            pol << QPointF(xPosition, yPosition);
+            mostRight = qMax(xPosition, mostRight);
+        }
     }
 
-
+    // Translate all the points if needed
     if(mostRight > right){
         qreal translate = right - mostRight;
         for(int i = 0; i < 3; ++i){
             QPen &pen = m_pens[i];
             QPolygonF &points = allPoint[i];
             points.translate(translate, 0);
+            clearOldValues(m_values[i], points, left);
             QPainterPath path;
             path.addPolygon(points);
             m_scene.addPath(path, pen);
         }
     } else {
+        // Just draw the points
         for(int i = 0; i < 3; ++i){
             QPen &pen = m_pens[i];
             QPolygonF &points = allPoint[i];
@@ -105,6 +125,8 @@ void SensorsGraph::drawValues(qreal left, qreal right, qreal top, qreal bottom, 
             m_scene.addPath(path, pen);
         }
     }
+
+    // Remove useless sensorValues (at the left of the graph)
 }
 
 void SensorsGraph::redraw()
