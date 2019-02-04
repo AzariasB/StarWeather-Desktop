@@ -77,8 +77,7 @@ bool ImprovedSerial::sendCommand(WeatherCommand command, char argument)
 
 quint16 ImprovedSerial::toSize(quint8 byte1, quint8 byte2)
 {
-    auto val = quint16( (quint16(byte1) << 8) | quint16(byte2));
-    return val;
+    return quint16( (quint16(byte1) << 8) | quint16(byte2));
 }
 
 WeatherCommand ImprovedSerial::currentMode() const

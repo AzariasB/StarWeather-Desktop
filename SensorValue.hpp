@@ -34,23 +34,60 @@
 #include <qglobal.h>
 #include "Config.hpp"
 
-
+/**
+ * @brief The SensorValue class
+ * Contains all the data sent from the arduino
+ * to represent the value sensed by a sensor
+ */
 class SensorValue
 {
 public:
+    /**
+      *
+      * Empty constructor needed for the QVector and such
+    */
     SensorValue() = default;
 
+    /**
+     * @brief SensorValue constructor
+     * @param timestamp timestamp of the sensed value
+     * @param byte1 first byte sent by the arduino
+     * @param byte2 second byte sent by the arduino
+     */
     SensorValue(timestamp_t timestamp, qint8 byte1, qint8 byte2);
 
+    /**
+     * @brief sensorId id of the sensor (between 1 and 3)
+     * @return
+     */
     qint8 sensorId() const;
 
+    /**
+     * @brief value value sensed by the sensor
+     * @return
+     */
     qint16 value() const;
 
+    /**
+     * @brief timestemp time when the value is sensed
+     * @return
+     */
     quint32 timestemp() const;
 
 private:
+    /**
+     * @brief m_sensorId id of the sensor
+     */
     qint8 m_sensorId = 0;
+
+    /**
+     * @brief m_value value sensed (is on ten bits, so 16 bits unsigned is needed)
+     */
     qint16 m_value = 0;
+
+    /**
+     * @brief m_timestamp time when the value was sensed
+     */
     timestamp_t m_timestamp = 0;
 };
 

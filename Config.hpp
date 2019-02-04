@@ -33,6 +33,11 @@
 
 #include <qglobal.h>
 
+/**
+ * @brief The WeatherCommand enum
+ * All the possible commands to send to the arduino
+ * some needs to be followed by a parameter
+ */
 enum WeatherCommand : quint8 {
     STOP_MODE = 0x0,
     START_MODE_1 = 0x1,
@@ -52,9 +57,16 @@ enum WeatherCommand : quint8 {
 constexpr quint16 VALUE_MASK     = 0b0000001111111111;
 constexpr quint16 SENSORID_MASK  = 0b0000110000000000;
 
+// Type used for the timestamp
 typedef quint32 timestamp_t;
+
+// Size of the timestamp
 constexpr quint8 TIMESTAMP_SIZE = sizeof(timestamp_t);
 
+/**
+ * @brief The Configuration struct
+ * Configuration send and received from the arduino
+ */
 struct Configuration{
     quint8 freq1;
     quint8 freq2;

@@ -39,18 +39,28 @@
 #include <QSerialPortInfo>
 #include "ImprovedSerial.hpp"
 
+/**
+ * @brief chooseSerialPort displays a input dialog to show the existing available serial port used to communicate
+ * with arduino
+ * @return
+ */
 QString chooseSerialPort(){
     QStringList possiblePorts;
-
+    QHash<QString, QString> equivalences;
 #ifdef QT_DEBUG
-    if(QFile::exists("./virtual-tty"))
-        possiblePorts.append("./virtual-tty");
-
+    if(QFile::exists("./virtual-tty")) {
+        equivalences.insert("WeatherSimulator", "./virtual-tty");
+        possiblePorts.append("WeatherSimulator");
+    }
 
 #else
     const auto ports =  QSerialPortInfo::availablePorts();
     for(const auto &port : ports){
-        possiblePorts.append(port.portName());
+        if(!port.isBusy() && !port.isNull() && port.manufacturer() != "Microsoft"){
+            QString displayName = port.portName() + " - " + port.manufacturer();
+            equivalences.insert(displayName, port.portName());
+            possiblePorts.append(port.portName() + " - " + port.manufacturer());
+        }
     }
 #endif
 
@@ -65,7 +75,7 @@ QString chooseSerialPort(){
         return "";
     }
 
-    return chosen;
+    return equivalences[chosen];
 }
 
 
@@ -80,7 +90,7 @@ int main(int argc, char *argv[])
     QSerialPort port(chosen);
 
     if(!port.open(QIODevice::ReadWrite)){
-        qWarning() << port.errorString() << "\n" << port.error();
+        QMessageBox::warning(nullptr, "Erreur", "Impossible de communiquer avec le port série");
         return EXIT_FAILURE;
     }
     ImprovedSerial c(port);

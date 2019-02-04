@@ -89,6 +89,11 @@ void MainWindow::sendFrequencies()
     conf.freq3 = ui->sensor3Slider->value();
     conf.mode2Time = ui->mode2Frequency->value();
     m_communicator.sendConfiguration(conf);
+
+    ui->sensor1Slider->setEnabled(false);
+    ui->sensor2Slider->setEnabled(false);
+    ui->sensor3Slider->setEnabled(false);
+    ui->mode2Frequency->setEnabled(false);
 }
 
 void MainWindow::aboutQt()
@@ -114,6 +119,23 @@ void MainWindow::arduinoConfirm(WeatherCommand command, qint8 code)
     if(command <= 3){
         ui->groupBoxMode->setEnabled(true);
         ui->mode3DataPushButton->setEnabled(command == 3);
+        return;
+    }
+    switch (command) {
+    case WeatherCommand::CONFIGURE_FE_1:
+        ui->sensor1Slider->setEnabled(true);
+        return;
+    case WeatherCommand::CONFIGURE_FE_2:
+        ui->sensor2Slider->setEnabled(true);
+        return;
+    case WeatherCommand::CONFIGURE_FE_3:
+        ui->sensor3Slider->setEnabled(true);
+        return;
+    case WeatherCommand::CONFIGURE_MODE_2:
+        ui->mode2Frequency->setEnabled(true);
+        return;
+    default:
+        break;
     }
 }
 

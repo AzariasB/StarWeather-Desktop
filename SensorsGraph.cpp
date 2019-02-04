@@ -47,6 +47,7 @@ SensorsGraph::SensorsGraph(QWidget *parent):
     setScene(&m_scene);
     setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
+    m_animation.setEasingCurve(QEasingCurve::InOutExpo);
 }
 
 
@@ -87,16 +88,26 @@ void SensorsGraph::clearOldValues(QVector<SensorValue> &values, QPolygonF &polyg
     }
 }
 
-void SensorsGraph::drawValues(qreal left, qreal right, qreal top, qreal bottom, qreal xStep)
+void SensorsGraph::setXTranslate(qreal nwValue)
+{
+    m_xTranslate = nwValue;
+    redraw();
+}
+
+qreal SensorsGraph::xTranslate() const
+{
+    return m_xTranslate;
+}
+
+void SensorsGraph::drawValues(const QRectF &viewport, qreal xStep)
 {
     QVector<QPolygonF> allPoint(3);
-
     qreal mostRight = 0;
     for(int i = 0; i < 3; ++i){
         QPolygonF &pol = allPoint[i];
         const QVector<SensorValue> &values = m_values[i];
         for(const SensorValue &val: values){
-            qreal yPosition = bottom - (((bottom - top) ) / MAX_Y) * val.value();
+            qreal yPosition = viewport.bottom() - (viewport.height() / MAX_Y) * val.value();
             qreal xPosition = (val.timestemp() / 1000.0) * (xStep / X_STEP);
             pol << QPointF(xPosition, yPosition);
             mostRight = qMax(xPosition, mostRight);
@@ -104,13 +115,20 @@ void SensorsGraph::drawValues(qreal left, qreal right, qreal top, qreal bottom, 
     }
 
     // Translate all the points if needed
-    if(mostRight > right){
-        qreal translate = right - mostRight;
+    if(mostRight > viewport.right()){
+        qreal translate = (viewport.right() - mostRight) - (viewport.right() / 3);
+
+        if(m_animation.state() != QAbstractAnimation::State::Running){
+            m_animation.setDuration(1000);
+            m_animation.setStartValue(xTranslate());
+            m_animation.setEndValue(translate);
+            m_animation.start();
+        }
         for(int i = 0; i < 3; ++i){
             QPen &pen = m_pens[i];
             QPolygonF &points = allPoint[i];
-            points.translate(translate, 0);
-            clearOldValues(m_values[i], points, left);
+            points.translate(xTranslate(), 0);
+            clearOldValues(m_values[i], points, viewport.left());
             QPainterPath path;
             path.addPolygon(points);
             m_scene.addPath(path, pen);
@@ -175,5 +193,5 @@ void SensorsGraph::fillScene()
     }
 
     m_scene.setSceneRect(m_scene.itemsBoundingRect());
-    drawValues(left, right, top, bottom, pixelStep);
+    drawValues(QRectF(left, top, right - left, bottom - top), pixelStep);
 }

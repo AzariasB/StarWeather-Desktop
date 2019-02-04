@@ -39,6 +39,9 @@ namespace Ui {
 class MainWindow;
 }
 
+/**
+ * @brief The MainWindow class
+ */
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -49,23 +52,54 @@ public:
     ~MainWindow();
 
 public slots:
+    /**
+     * @brief setMode changes the mode on the arduino
+     */
     void setMode();
 
+    /**
+     * @brief arduinoConfirm when the arduino confirms that a certain command has
+     * been completed (or not)
+     * @param command the command executed
+     * @param code error code : 0 means success, otherwiset, means error
+     */
     void arduinoConfirm(WeatherCommand command, qint8 code);
 
+    /**
+     * @brief setFrequencies whenever the aruino sends its configuration,
+     * updates the UI
+     * @param conf
+     */
     void setFrequencies(Configuration conf);
 
+    /**
+     * @brief sendFrequencies send the conf chosen by the user
+     * to the arduino
+     */
     void sendFrequencies();
 
+    /**
+     * @brief getMode3Data when the user clicks the button 'get mode 3 data'
+     * sends the command to the arduino to get the data
+     */
     void getMode3Data();
 
+    /**
+     * @brief aboutQt shows the dialog 'about qt'
+     */
     void aboutQt();
 
+    /**
+     * @brief about shows the dialog 'about'
+     */
     void about();
 
 private:
     Ui::MainWindow *ui;
 
+    /**
+     * @brief m_communicator used to communicate with the ardunio
+     */
     ImprovedSerial &m_communicator;
 };
 
