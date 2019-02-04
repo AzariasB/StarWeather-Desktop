@@ -350,7 +350,7 @@
      <x>0</x>
      <y>0</y>
      <width>897</width>
-     <height>25</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFichier">
@@ -391,7 +391,7 @@
   <customwidget>
    <class>SensorsGraph</class>
    <extends>QGraphicsView</extends>
-   <header>SensorsGraph.hpp</header>
+   <header>src/SensorsGraph.hpp</header>
   </customwidget>
  </customwidgets>
  <resources/>
