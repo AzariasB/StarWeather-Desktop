@@ -19,21 +19,21 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++17
 
 SOURCES += \
-        main.cpp \
-        MainWindow.cpp \
-    SensorsGraph.cpp \
-    SensorValue.cpp \
-    ImprovedSerial.cpp
+        src/main.cpp \
+        src/MainWindow.cpp \
+    src/SensorsGraph.cpp \
+    src/SensorValue.cpp \
+    src/ImprovedSerial.cpp
 
 HEADERS += \
-        MainWindow.hpp \
-    SensorsGraph.hpp \
-    SensorValue.hpp \
-    ImprovedSerial.hpp \
-    Config.hpp
+        src/MainWindow.hpp \
+    src/SensorsGraph.hpp \
+    src/SensorValue.hpp \
+    src/ImprovedSerial.hpp \
+    src/Config.hpp
 
 FORMS += \
-        MainWindow.ui
+        src/MainWindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
