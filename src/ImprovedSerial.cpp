@@ -59,6 +59,9 @@ void ImprovedSerial::readData()
         case GET_FREQUENCIES:
             emit receivedConfig(readConfiguration(stream));
             break;
+        case DEBUG:
+            readDebug(stream);
+            break;
         default:
             readCommand(stream, command);
             break;
@@ -83,6 +86,18 @@ quint16 ImprovedSerial::toSize(quint8 byte1, quint8 byte2)
 WeatherCommand ImprovedSerial::currentMode() const
 {
     return m_currentMode;
+}
+
+void ImprovedSerial::readDebug(QQueue<quint8> &stream)
+{
+    QByteArray total;
+    while(true){
+        waitNextBytes(stream, 1);
+        char nw = stream.dequeue();
+        if(nw == 0xF) break;
+        total.append(nw);
+    }
+    qDebug() << "[DEBUG] " << QString(total);
 }
 
 void ImprovedSerial::readCommand(QQueue<quint8> &stream, WeatherCommand command)

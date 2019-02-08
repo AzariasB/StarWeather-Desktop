@@ -158,6 +158,12 @@ private:
     QVector<SensorValue> readPack(QQueue<quint8> &stream);
 
     /**
+     * @brief receivedDebug whenever the
+     * arduino sends data for debugging purpose
+     */
+    void readDebug(QQueue<quint8> &stream);
+
+    /**
      * @brief readConfiguration read the confgiuration sent by the arduino
      * @param stream queue conatining the data
      * @return the configuration read

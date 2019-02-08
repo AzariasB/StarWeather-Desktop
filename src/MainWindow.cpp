@@ -66,7 +66,9 @@ MainWindow::MainWindow(ImprovedSerial &comm, QWidget *parent) :
         ++id;
     }
 
-    m_communicator.sendCommand(WeatherCommand::GET_FREQUENCIES);
+    if(!m_communicator.sendCommand(WeatherCommand::GET_FREQUENCIES)){
+        qDebug() << "Failed to send command";
+    }
 }
 
 void MainWindow::getMode3Data()

@@ -50,7 +50,8 @@ enum WeatherCommand : quint8 {
     CONFIGURE_MODE_2 = 0x8,
     SEND_MODE1_DATA = 0x9,
     SEND_MODE2_DATA = 0xA,
-    GET_FREQUENCIES = 0xB
+    GET_FREQUENCIES = 0xB,
+    DEBUG = 0xF
 };
 
 

@@ -91,6 +91,11 @@ int main(int argc, char *argv[])
     if(chosen.isEmpty()) return EXIT_SUCCESS;
 
     QSerialPort port(chosen);
+    port.setBaudRate(250000);
+    port.setDataBits(QSerialPort::Data8);
+    port.setParity(QSerialPort::NoParity);
+    port.setFlowControl(QSerialPort::NoFlowControl);
+    port.setStopBits(QSerialPort::OneStop);
 
     if(!port.open(QIODevice::ReadWrite)){
         QMessageBox::warning(nullptr, "Erreur", "Impossible de communiquer avec le port série");
