@@ -33,6 +33,7 @@
 #include "SensorValue.hpp"
 #include <QtDebug>
 #include <QMessageBox>
+#include <QProgressDialog>
 #include <QLineSeries>
 #include <QChartView>
 
@@ -42,6 +43,7 @@ MainWindow::MainWindow(ImprovedSerial &comm, QWidget *parent) :
     m_communicator(comm)
 {
     ui->setupUi(this);
+    setEnabled(false);
     ui->chartView->setChart(m_chart = new SensorChart());
 
     connect(&m_communicator, &ImprovedSerial::receivedData, [this](SensorValue val){
@@ -67,9 +69,21 @@ MainWindow::MainWindow(ImprovedSerial &comm, QWidget *parent) :
         ++id;
     }
 
-    if(!m_communicator.sendCommand(WeatherCommand::GET_FREQUENCIES)){
-        qDebug() << "Failed to send command";
-    }
+    m_box.setText("Chargement");
+    m_box.setWindowModality(Qt::ApplicationModal);
+    m_box.show();
+
+    m_readyTimer.setInterval(2000);
+    m_readyTimer.setSingleShot(true);
+    m_readyTimer.start();
+
+    connect(&m_readyTimer, &QTimer::timeout,[this](){
+        if(!m_communicator.sendCommand(WeatherCommand::GET_FREQUENCIES)){
+            qDebug() << "Failed to send command";
+        }
+        setEnabled(true);
+        m_box.hide();
+    });
 }
 
 void MainWindow::getMode3Data()
@@ -112,10 +126,23 @@ void MainWindow::about()
 
 void MainWindow::setFrequencies(Configuration conf)
 {
+    ui->sensor1Slider->blockSignals(true);
+    ui->sensor2Slider->blockSignals(true);
+    ui->sensor3Slider->blockSignals(true);
+    ui->mode2Frequency->blockSignals(true);
+
     ui->sensor1Slider->setValue(conf.freq1);
+    ui->lcdFreq1->display(conf.freq1);
     ui->sensor2Slider->setValue(conf.freq2);
+    ui->lcdFreq2->display(conf.freq2);
     ui->sensor3Slider->setValue(conf.freq3);
+    ui->lcdFreq3->display(conf.freq3);
     ui->mode2Frequency->setValue(conf.mode2Time);
+
+    ui->sensor1Slider->blockSignals(false);
+    ui->sensor2Slider->blockSignals(false);
+    ui->sensor3Slider->blockSignals(false);
+    ui->mode2Frequency->blockSignals(false);
 }
 
 void MainWindow::spinBoxUpdate(int nwValue)
@@ -127,7 +154,10 @@ void MainWindow::spinBoxUpdate(int nwValue)
 void MainWindow::sliderUpdate(int nwValue)
 {
     QSlider* slider = static_cast<QSlider*>(QObject::sender());
-    if(slider == ui->sensor1Slider) sendSliderValue(CONFIGURE_FE_1, slider);
+    if(slider == ui->sensor1Slider){
+        qDebug() << "New = " << nwValue << " vs " << ui->sensor1Slider->value();
+        sendSliderValue(CONFIGURE_FE_1, slider);
+    }
     if(slider == ui->sensor2Slider) sendSliderValue(CONFIGURE_FE_2, slider);
     if(slider == ui->sensor3Slider) sendSliderValue(CONFIGURE_FE_3, slider);
 }
