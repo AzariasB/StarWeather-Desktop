@@ -24,14 +24,12 @@ CONFIG += c++17
 SOURCES += \
         src/main.cpp \
         src/MainWindow.cpp \
-    src/SensorsGraph.cpp \
     src/SensorValue.cpp \
     src/ImprovedSerial.cpp \
     src/SensorChart.cpp
 
 HEADERS += \
         src/MainWindow.hpp \
-    src/SensorsGraph.hpp \
     src/SensorValue.hpp \
     src/ImprovedSerial.hpp \
     src/Config.hpp \
