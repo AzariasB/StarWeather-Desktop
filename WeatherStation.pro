@@ -12,6 +12,9 @@ TARGET = WeatherStation
 TEMPLATE = app
 
 win32:RC_ICONS += icon.ico
+macx {
+    ICON = icon.icns
+}
 
 DEFINES += QT_DEPRECATED_WARNINGS
 
