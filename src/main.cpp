@@ -103,6 +103,9 @@ int main(int argc, char *argv[])
     }
     ImprovedSerial c(port);
 
+    QObject::connect(&port, &QSerialPort::errorOccurred, [&port](QSerialPort::SerialPortError err){
+        qDebug() << "Error " << port.errorString();
+    });
 
     MainWindow win(c);
     win.show();

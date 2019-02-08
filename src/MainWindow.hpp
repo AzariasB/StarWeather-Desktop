@@ -36,6 +36,7 @@
 #include <QLineSeries>
 #include "SensorChart.hpp"
 #include "ImprovedSerial.hpp"
+#include <QSlider>
 
 namespace Ui {
 class MainWindow;
@@ -96,6 +97,14 @@ public slots:
      */
     void about();
 
+    /**
+     * @brief sliderReleased when a slider is released, update the value on the arduino
+     * @param sliderId
+     */
+    void sliderUpdate(int nwValue);
+
+    void spinBoxUpdate(int nwValue);
+
 private:
     Ui::MainWindow *ui;
 
@@ -105,6 +114,8 @@ private:
     ImprovedSerial &m_communicator;
 
     SensorChart *m_chart;
+
+    void sendSliderValue(WeatherCommand freq, QAbstractSlider *slider);
 };
 
 #endif // MAINWINDOW_HPP

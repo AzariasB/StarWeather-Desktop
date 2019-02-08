@@ -74,8 +74,12 @@ void ImprovedSerial::readData()
 
 bool ImprovedSerial::sendCommand(WeatherCommand command, char argument)
 {
-    char data[] = {char(command), argument};
-    return (m_port.write(data, 2) == 2) && m_port.flush();
+    QByteArray data;
+    data.append(command);
+    if(argument != 0){
+        data.append(argument);
+    }
+    return (m_port.write(data) == data.size()) && m_port.flush();
 }
 
 quint16 ImprovedSerial::toSize(quint8 byte1, quint8 byte2)
@@ -164,7 +168,7 @@ QQueue<quint8> &ImprovedSerial::waitNextBytes(QQueue<quint8> &stream, quint16 by
     if(stream.size() >= bytes) return stream;
 
     while(stream.size() < bytes){
-        while(!m_port.waitForReadyRead());
+        while(!m_port.waitForReadyRead(-1));
 
         enQueue(m_port.readAll(), stream);
     }

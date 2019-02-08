@@ -60,6 +60,7 @@ MainWindow::MainWindow(ImprovedSerial &comm, QWidget *parent) :
     connect(&m_communicator, &ImprovedSerial::receivedCommand, this, &MainWindow::arduinoConfirm);
     connect(&m_communicator, &ImprovedSerial::receivedConfig, this, &MainWindow::setFrequencies);
 
+
     int id = 0;
     for(auto *btn : ui->modeGroup->buttons()){
         ui->modeGroup->setId(btn, id);
@@ -115,6 +116,26 @@ void MainWindow::setFrequencies(Configuration conf)
     ui->sensor2Slider->setValue(conf.freq2);
     ui->sensor3Slider->setValue(conf.freq3);
     ui->mode2Frequency->setValue(conf.mode2Time);
+}
+
+void MainWindow::spinBoxUpdate(int nwValue)
+{
+    m_communicator.sendCommand(CONFIGURE_MODE_2, nwValue);
+    ui->mode2Frequency->setEnabled(false);
+}
+
+void MainWindow::sliderUpdate(int nwValue)
+{
+    QSlider* slider = static_cast<QSlider*>(QObject::sender());
+    if(slider == ui->sensor1Slider) sendSliderValue(CONFIGURE_FE_1, slider);
+    if(slider == ui->sensor2Slider) sendSliderValue(CONFIGURE_FE_2, slider);
+    if(slider == ui->sensor3Slider) sendSliderValue(CONFIGURE_FE_3, slider);
+}
+
+void MainWindow::sendSliderValue(WeatherCommand freq, QAbstractSlider *slider)
+{
+    m_communicator.sendCommand(freq, slider->value());
+    slider->setEnabled(false);
 }
 
 void MainWindow::arduinoConfirm(WeatherCommand command, qint8 code)
