@@ -333,7 +333,11 @@
      </layout>
     </item>
     <item row="1" column="0">
-     <widget class="QtCharts::QChartView" name="chartView"/>
+     <widget class="QtCharts::QChartView" name="chartView">
+      <property name="renderHints">
+       <set>QPainter::Antialiasing|QPainter::TextAntialiasing</set>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>

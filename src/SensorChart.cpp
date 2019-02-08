@@ -38,15 +38,15 @@ SensorChart::SensorChart() : QtCharts::QChart ()
     m_xAxis = new QtCharts::QValueAxis();
     auto *yAxis = new QtCharts::QValueAxis();
     yAxis->setRange(0, 1024);
-    m_xAxis->setRange(0, 1000);
-    m_xAxis->setTickCount(5);
+    m_xAxis->setRange(0, m_maxT = 30);
+    m_xAxis->setTickCount(4);
     m_xAxis->setTitleText("Temps (s)");
     yAxis->setTitleText("Valeur");
     addAxis(m_xAxis, Qt::AlignBottom);
     addAxis(yAxis, Qt::AlignLeft);
 
     for(int i = 0; i < 3; ++i){
-        auto serie = new QtCharts::QSplineSeries();
+        auto serie = new serie_t();
         serie->setPointsVisible(true);
         addSeries(serie);
         serie->attachAxis(m_xAxis);
@@ -57,24 +57,38 @@ SensorChart::SensorChart() : QtCharts::QChart ()
 
     legend()->show();
     setTitle("Valeurs arduino");
-    setAnimationOptions(QtCharts::QChart::AllAnimations);
+    setAnimationOptions(QtCharts::QChart::GridAxisAnimations);
 }
 
 qreal SensorChart::toSeconds(quint32 milliseconds)
 {
-    return qreal(milliseconds / 10000.0);
+    return qreal(milliseconds / 1000.0);
 }
 
-void SensorChart::redraw()
+void SensorChart::removeUnseenValues(serie_t *series)
 {
-
+    qreal min = m_xAxis->min();
+    while(series->count() > 0){
+        if(series->at(0).x() < min){
+            series->remove(0);
+        } else {
+            break;
+        }
+    }
 }
 
 void SensorChart::drawSensorValue(const SensorValue &value)
 {
     qreal seconds = toSeconds(value.timestamp());
-    static_cast<QtCharts::QSplineSeries*>(series().takeAt(value.sensorId()-1))->append(seconds, value.value());
+    serie_t *serie = static_cast<serie_t*>(series().takeAt(value.sensorId()-1));
+    serie->append(seconds, value.value());
     if(seconds > m_xAxis->max()){
+        setAnimationOptions(QtCharts::QChart::NoAnimation);
+        for(int i = 0; i < 3; ++i){
+            serie_t *toClear = static_cast<serie_t*>(series().takeAt(i));
+            removeUnseenValues(toClear);
+        }
+        setAnimationOptions(QtCharts::QChart::GridAxisAnimations);
         scroll(plotArea().width() / 2.0, 0);
     }
 }

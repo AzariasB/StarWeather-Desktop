@@ -36,6 +36,8 @@
 #include <QSplineSeries>
 #include <QValueAxis>
 
+typedef QtCharts::QSplineSeries serie_t;
+
 class SensorValue;
 
 class SensorChart : public QtCharts::QChart
@@ -46,12 +48,12 @@ public:
 
     void drawSensorValue(const SensorValue &value);
 
-    void redraw();
-
 private:
     qreal m_maxT = 50;
 
     qreal toSeconds(quint32 milliseconds);
+
+    void removeUnseenValues(serie_t *series);
 
     QtCharts::QValueAxis *m_xAxis;
 };

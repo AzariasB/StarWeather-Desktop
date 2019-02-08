@@ -49,7 +49,7 @@
 QString chooseSerialPort(){
     QStringList possiblePorts;
     QHash<QString, QString> equivalences;
-#ifdef QT_DEBUG
+#ifndef QT_DEBUG
     if(QFile::exists("./virtual-tty")) {
         equivalences.insert("WeatherSimulator", "./virtual-tty");
         possiblePorts.append("WeatherSimulator");

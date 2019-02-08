@@ -136,8 +136,8 @@ SensorValue ImprovedSerial::readlSensorValue(QQueue<quint8> &stream)
     waitNextBytes(stream, TIMESTAMP_SIZE + 2);
     timestamp_t timestamp = 0;
     for(int i = 0; i < TIMESTAMP_SIZE; ++i){
-        timestamp |= stream.dequeue();
         timestamp <<= 8;
+        timestamp |= stream.dequeue();
     }
     quint8 byte1 = stream.dequeue();
     quint8 byte2 = stream.dequeue();
