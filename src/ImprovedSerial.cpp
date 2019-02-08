@@ -94,7 +94,7 @@ void ImprovedSerial::readDebug(QQueue<quint8> &stream)
     while(true){
         waitNextBytes(stream, 1);
         char nw = stream.dequeue();
-        if(nw == 0xF) break;
+        if(nw == '~') break;
         total.append(nw);
     }
     qDebug() << "[DEBUG] " << QString(total);
