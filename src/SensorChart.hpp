@@ -23,36 +23,37 @@
  */
 
 /*
- * File:   SensorValue.cpp
+ * File:   SensorChart.hpp
  * Author: azarias
  *
- * Created on 31/1/2019
+ * Created on 7/2/2019
  */
-#include "SensorValue.hpp"
-#include <QtDebug>
-#include <QString>
+#ifndef SENSORCHART_HPP
+#define SENSORCHART_HPP
 
-SensorValue::SensorValue(timestamp_t timestamp, qint8 byte1, qint8 byte2):
-    m_timestamp(timestamp)
+#include <QWidget>
+#include <QChartView>
+#include <QSplineSeries>
+#include <QValueAxis>
+
+class SensorValue;
+
+class SensorChart : public QtCharts::QChart
 {
-    quint16 combined = quint16(quint16(byte1) << 8);
-    combined |=  qint16(byte2) & 0x00FF;
-    m_value = combined & VALUE_MASK;
-    m_sensorId = (combined & SENSORID_MASK) >> 10;
-}
+    Q_OBJECT
+public:
+    explicit SensorChart();
 
+    void drawSensorValue(const SensorValue &value);
 
-qint16 SensorValue::value() const
-{
-    return m_value;
-}
+    void redraw();
 
-qint8 SensorValue::sensorId() const
-{
-    return m_sensorId;
-}
+private:
+    qreal m_maxT = 50;
 
-quint32 SensorValue::timestamp() const
-{
-    return m_timestamp;
-}
+    qreal toSeconds(quint32 milliseconds);
+
+    QtCharts::QValueAxis *m_xAxis;
+};
+
+#endif // SENSORCHART_HPP

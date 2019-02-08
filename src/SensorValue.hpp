@@ -72,7 +72,7 @@ public:
      * @brief timestemp time when the value is sensed
      * @return
      */
-    quint32 timestemp() const;
+    quint32 timestamp() const;
 
 private:
     /**

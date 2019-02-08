@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>897</width>
-    <height>514</height>
+    <width>999</width>
+    <height>650</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -330,17 +330,10 @@
         </item>
        </layout>
       </item>
-      <item row="2" column="2" rowspan="3">
-       <widget class="SensorsGraph" name="graph">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
-      </item>
      </layout>
+    </item>
+    <item row="1" column="0">
+     <widget class="QtCharts::QChartView" name="chartView"/>
     </item>
    </layout>
   </widget>
@@ -349,7 +342,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>897</width>
+     <width>999</width>
      <height>20</height>
     </rect>
    </property>
@@ -389,9 +382,9 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>SensorsGraph</class>
+   <class>QtCharts::QChartView</class>
    <extends>QGraphicsView</extends>
-   <header>src/SensorsGraph.hpp</header>
+   <header location="global">QChartView</header>
   </customwidget>
  </customwidgets>
  <resources/>

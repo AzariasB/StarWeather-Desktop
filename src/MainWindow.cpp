@@ -33,6 +33,8 @@
 #include "SensorValue.hpp"
 #include <QtDebug>
 #include <QMessageBox>
+#include <QLineSeries>
+#include <QChartView>
 
 MainWindow::MainWindow(ImprovedSerial &comm, QWidget *parent) :
     QMainWindow(parent),
@@ -40,10 +42,10 @@ MainWindow::MainWindow(ImprovedSerial &comm, QWidget *parent) :
     m_communicator(comm)
 {
     ui->setupUi(this);
+    ui->chartView->setChart(m_chart = new SensorChart());
 
     connect(&m_communicator, &ImprovedSerial::receivedData, [this](SensorValue val){
-        ui->graph->drawSensorValue(val);
-        ui->graph->redraw();
+        m_chart->drawSensorValue(val);
     });
 
     connect(&m_communicator, &ImprovedSerial::receivedDataPack, [this](QVector<SensorValue> vals){
@@ -51,9 +53,8 @@ MainWindow::MainWindow(ImprovedSerial &comm, QWidget *parent) :
             ui->mode3DataPushButton->setEnabled(true);
         }
         for(SensorValue val : vals){
-            ui->graph->drawSensorValue(val);
+            m_chart->drawSensorValue(val);
         }
-        ui->graph->redraw();
     });
 
     connect(&m_communicator, &ImprovedSerial::receivedCommand, this, &MainWindow::arduinoConfirm);

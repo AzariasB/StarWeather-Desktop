@@ -108,7 +108,7 @@ void SensorsGraph::drawValues(const QRectF &viewport, qreal xStep)
         const QVector<SensorValue> &values = m_values[i];
         for(const SensorValue &val: values){
             qreal yPosition = viewport.bottom() - (viewport.height() / MAX_Y) * val.value();
-            qreal xPosition = (val.timestemp() / 1000.0) * (xStep / X_STEP);
+            qreal xPosition = (val.timestamp() / 1000.0) * (xStep / X_STEP);
             pol << QPointF(xPosition, yPosition);
             mostRight = qMax(xPosition, mostRight);
         }

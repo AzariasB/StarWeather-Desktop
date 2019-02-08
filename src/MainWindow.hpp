@@ -33,6 +33,8 @@
 
 #include <QMainWindow>
 #include <QTime>
+#include <QLineSeries>
+#include "SensorChart.hpp"
 #include "ImprovedSerial.hpp"
 
 namespace Ui {
@@ -101,6 +103,8 @@ private:
      * @brief m_communicator used to communicate with the ardunio
      */
     ImprovedSerial &m_communicator;
+
+    SensorChart *m_chart;
 };
 
 #endif // MAINWINDOW_HPP

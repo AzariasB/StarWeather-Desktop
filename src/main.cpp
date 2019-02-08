@@ -37,7 +37,9 @@
 #include <QMessageBox>
 #include <QFile>
 #include <QSerialPortInfo>
+#include <QLineSeries>
 #include "ImprovedSerial.hpp"
+
 
 /**
  * @brief chooseSerialPort displays a input dialog to show the existing available serial port used to communicate
@@ -83,6 +85,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     qsrand(time(NULL));
+
 
     QString chosen = chooseSerialPort();
     if(chosen.isEmpty()) return EXIT_SUCCESS;
