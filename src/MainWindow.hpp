@@ -37,6 +37,7 @@
 #include "SensorChart.hpp"
 #include "ImprovedSerial.hpp"
 #include <QSlider>
+#include <QMessageBox>
 
 namespace Ui {
 class MainWindow;
@@ -114,6 +115,10 @@ private:
     ImprovedSerial &m_communicator;
 
     SensorChart *m_chart;
+
+    QTimer m_readyTimer;
+
+    QMessageBox m_box;
 
     void sendSliderValue(WeatherCommand freq, QAbstractSlider *slider);
 };
