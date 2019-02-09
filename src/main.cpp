@@ -49,7 +49,7 @@
 QString chooseSerialPort(){
     QStringList possiblePorts;
     QHash<QString, QString> equivalences;
-#ifndef QT_DEBUG
+#ifdef QT_DEBUG
     if(QFile::exists("./virtual-tty")) {
         equivalences.insert("WeatherSimulator", "./virtual-tty");
         possiblePorts.append("WeatherSimulator");
@@ -88,10 +88,16 @@ int main(int argc, char *argv[])
 
 
     QString chosen = chooseSerialPort();
+
     if(chosen.isEmpty()) return EXIT_SUCCESS;
 
+    bool ok;
+    QString baudRate = QInputDialog::getItem(nullptr, "BaudRate", "Choix du baud rate", {"9600", "250000"}, 0, false, &ok);
+
+    if(baudRate.isEmpty() || !ok) return EXIT_SUCCESS;
+
     QSerialPort port(chosen);
-    port.setBaudRate(250000);
+    port.setBaudRate(baudRate.toInt());
     port.setDataBits(QSerialPort::Data8);
     port.setParity(QSerialPort::NoParity);
     port.setFlowControl(QSerialPort::NoFlowControl);

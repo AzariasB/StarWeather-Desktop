@@ -37,6 +37,11 @@ ImprovedSerial::ImprovedSerial(QSerialPort &port, QObject *parent) :
     connect(&m_port, &QSerialPort::readyRead, this, &ImprovedSerial::readData);
 }
 
+ImprovedSerial::~ImprovedSerial()
+{
+    m_port.close();
+}
+
 void ImprovedSerial::readData()
 {
     // Disconnect, to let us read data when needed

@@ -76,6 +76,8 @@ public:
      */
     bool sendConfiguration(const Configuration &conf);
 
+    ~ImprovedSerial();
+
 signals:
     /**
      * @brief receivedConfig whenever the arduino sent its configuration

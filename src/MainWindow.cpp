@@ -112,10 +112,23 @@ void MainWindow::about()
 
 void MainWindow::setFrequencies(Configuration conf)
 {
+    ui->sensor1Slider->blockSignals(true);
+    ui->sensor2Slider->blockSignals(true);
+    ui->sensor3Slider->blockSignals(true);
+    ui->mode2Frequency->blockSignals(true);
+
     ui->sensor1Slider->setValue(conf.freq1);
+    ui->lcdFreq1->display(conf.freq1);
     ui->sensor2Slider->setValue(conf.freq2);
+    ui->lcdFreq2->display(conf.freq2);
     ui->sensor3Slider->setValue(conf.freq3);
+    ui->lcdFreq3->display(conf.freq3);
     ui->mode2Frequency->setValue(conf.mode2Time);
+
+    ui->sensor1Slider->blockSignals(false);
+    ui->sensor2Slider->blockSignals(false);
+    ui->sensor3Slider->blockSignals(false);
+    ui->mode2Frequency->blockSignals(false);
 }
 
 void MainWindow::spinBoxUpdate(int nwValue)
